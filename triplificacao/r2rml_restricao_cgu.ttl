@@ -16,34 +16,34 @@
 @prefix time: <http://www.w3.org/TR/owl-time/>.
 
 
- map:Provenance a rr:TriplesMap;
+ map:Restricao a rr:TriplesMap;
 
     rr:logicalTable [ 
-            rr:sqlQuery """SELECT * from provenance""" ];
+            rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
 
     rr:subjectMap [
-        rr:template "Provenance/{id}/";
-        rr:class vocab:Provenance;
-    ];
 
-	rr:predicateObjectMap [
+        rr:template "Restricao/{rid}/";
 
-        rr:predicate rdfs:label;
-
-        rr:objectMap [            
-            rr:template "{label}"; 
-            rr:termType rr:Literal;
-        ];
+        rr:class vocab:Restricao;
 
     ];
-	
-	rr:predicateObjectMap [
 
-        rr:predicate dbr:fileName;
+    
+
+    rr:predicateObjectMap [
+
+
+        rr:predicate vocab:numProcess;
+
 
         rr:objectMap [            
-            rr:template "{filename}"; 
+
+
+            rr:template "{numProcess}"; 
+
             rr:termType rr:Literal;
+
         ];
 
     ]; 
@@ -59,28 +59,17 @@
 
     ]; 
 	
-	rr:predicateObjectMap [
-
-        rr:predicate dc:source;
-
-        rr:objectMap [            
-            rr:template "{source}"; 
-            rr:termType rr:Literal;
-        ];
-
-    ]; 
 	
 	rr:predicateObjectMap [
 
-        rr:predicate vocab:complement;
+        rr:predicate vocab:tipoRestricao;
 
         rr:objectMap [            
-            rr:template "{complement}"; 
+            rr:template "{tipo_sancao}"; 
             rr:termType rr:Literal;
         ];
 
     ]; 
-   
  .
 
 

@@ -5,7 +5,7 @@
 -- Dumped from database version 9.5.3
 -- Dumped by pg_dump version 9.5.3
 
--- Started on 2016-07-13 10:39:07 BRT
+-- Started on 2016-07-13 11:24:20
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,7 +16,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 1 (class 3079 OID 12623)
+-- TOC entry 1 (class 3079 OID 12355)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
@@ -24,7 +24,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2436 (class 0 OID 0)
+-- TOC entry 2170 (class 0 OID 0)
 -- Dependencies: 1
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
@@ -35,7 +35,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 192 (class 1255 OID 16394)
+-- TOC entry 192 (class 1255 OID 24821)
 -- Name: sem_acento(text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -57,7 +57,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 181 (class 1259 OID 16395)
+-- TOC entry 181 (class 1259 OID 25020)
 -- Name: pessoa_restricao_tcu; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -78,7 +78,7 @@ CREATE TABLE pessoa_restricao_tcu (
 ALTER TABLE pessoa_restricao_tcu OWNER TO postgres;
 
 --
--- TOC entry 182 (class 1259 OID 16403)
+-- TOC entry 182 (class 1259 OID 25028)
 -- Name: pessoa_restricao_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -93,7 +93,7 @@ CREATE SEQUENCE pessoa_restricao_id_seq
 ALTER TABLE pessoa_restricao_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2437 (class 0 OID 0)
+-- TOC entry 2171 (class 0 OID 0)
 -- Dependencies: 182
 -- Name: pessoa_restricao_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -102,7 +102,7 @@ ALTER SEQUENCE pessoa_restricao_id_seq OWNED BY pessoa_restricao_tcu.id;
 
 
 --
--- TOC entry 187 (class 1259 OID 16531)
+-- TOC entry 183 (class 1259 OID 25030)
 -- Name: pessoa_restricao_cgu; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -123,7 +123,7 @@ CREATE TABLE pessoa_restricao_cgu (
 ALTER TABLE pessoa_restricao_cgu OWNER TO postgres;
 
 --
--- TOC entry 189 (class 1259 OID 16564)
+-- TOC entry 184 (class 1259 OID 25039)
 -- Name: pessoa_cgu_view; Type: VIEW; Schema: public; Owner: postgres
 --
 
@@ -139,7 +139,7 @@ CREATE VIEW pessoa_cgu_view AS
 ALTER TABLE pessoa_cgu_view OWNER TO postgres;
 
 --
--- TOC entry 188 (class 1259 OID 16560)
+-- TOC entry 189 (class 1259 OID 25114)
 -- Name: pessoa_tcu_view; Type: VIEW; Schema: public; Owner: postgres
 --
 
@@ -148,14 +148,14 @@ CREATE VIEW pessoa_tcu_view AS
     temp.cpf,
     temp.nome
    FROM ( SELECT DISTINCT pessoa_restricao_tcu.cpf,
-            sem_acento((pessoa_restricao_tcu.nome)::text) AS nome
+            upper(sem_acento((pessoa_restricao_tcu.nome)::text)) AS nome
            FROM pessoa_restricao_tcu) temp;
 
 
 ALTER TABLE pessoa_tcu_view OWNER TO postgres;
 
 --
--- TOC entry 183 (class 1259 OID 16409)
+-- TOC entry 185 (class 1259 OID 25047)
 -- Name: provenance; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -172,7 +172,7 @@ CREATE TABLE provenance (
 ALTER TABLE provenance OWNER TO postgres;
 
 --
--- TOC entry 184 (class 1259 OID 16415)
+-- TOC entry 186 (class 1259 OID 25053)
 -- Name: provenance_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -187,8 +187,8 @@ CREATE SEQUENCE provenance_id_seq
 ALTER TABLE provenance_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2438 (class 0 OID 0)
--- Dependencies: 184
+-- TOC entry 2172 (class 0 OID 0)
+-- Dependencies: 186
 -- Name: provenance_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -196,49 +196,67 @@ ALTER SEQUENCE provenance_id_seq OWNED BY provenance.id;
 
 
 --
--- TOC entry 191 (class 1259 OID 16572)
+-- TOC entry 191 (class 1259 OID 25122)
 -- Name: restricao_cgu_view; Type: VIEW; Schema: public; Owner: postgres
 --
 
 CREATE VIEW restricao_cgu_view AS
- SELECT pv.id AS pessoa_id,
-    pr.restritor_id,
-    pr.provenance_id,
-    pr.numprocess,
-    pr.uf,
-    pr.orgaosancionador,
-    pr.date AS data_lancamento,
-    pr.tipo_sancao
-   FROM pessoa_restricao_cgu pr,
-    pessoa_cgu_view pv
-  WHERE ((pr.cpf)::text = (pv.cpf)::text);
+ SELECT row_number() OVER () AS rid,
+    temp.pessoa_id,
+    temp.restritor_id,
+    temp.provenance_id,
+    temp.numprocess,
+    temp.uf,
+    temp.orgaosancionador,
+    temp.date,
+    temp.tipo_sancao
+   FROM ( SELECT pv.id AS pessoa_id,
+            pr.restritor_id,
+            pr.provenance_id,
+            pr.numprocess,
+            pr.uf,
+            pr.orgaosancionador,
+            pr.date,
+            pr.tipo_sancao
+           FROM pessoa_restricao_cgu pr,
+            pessoa_cgu_view pv
+          WHERE ((pr.cpf)::text = (pv.cpf)::text)) temp;
 
 
 ALTER TABLE restricao_cgu_view OWNER TO postgres;
 
 --
--- TOC entry 190 (class 1259 OID 16568)
+-- TOC entry 190 (class 1259 OID 25118)
 -- Name: restricao_tcu_view; Type: VIEW; Schema: public; Owner: postgres
 --
 
 CREATE VIEW restricao_tcu_view AS
- SELECT pv.id AS pessoa_id,
-    pr.restritor_id,
-    pr.provenance_id,
-    pr.numprocess,
-    pr.licitar,
-    pr.uf,
-    pr.orgaosancionador,
-    pr.date
-   FROM pessoa_restricao_tcu pr,
-    pessoa_tcu_view pv
-  WHERE ((pr.cpf)::text = (pv.cpf)::text);
+ SELECT row_number() OVER () AS rid,
+    temp.pessoa_id,
+    temp.restritor_id,
+    temp.provenance_id,
+    temp.numprocess,
+    temp.licitar,
+    temp.uf,
+    temp.orgaosancionador,
+    temp.date
+   FROM ( SELECT pv.id AS pessoa_id,
+            pr.restritor_id,
+            pr.provenance_id,
+            pr.numprocess,
+            pr.licitar,
+            pr.uf,
+            pr.orgaosancionador,
+            pr.date
+           FROM pessoa_restricao_tcu pr,
+            pessoa_tcu_view pv
+          WHERE ((pr.cpf)::text = (pv.cpf)::text)) temp;
 
 
 ALTER TABLE restricao_tcu_view OWNER TO postgres;
 
 --
--- TOC entry 185 (class 1259 OID 16417)
+-- TOC entry 187 (class 1259 OID 25063)
 -- Name: restritor; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -251,7 +269,7 @@ CREATE TABLE restritor (
 ALTER TABLE restritor OWNER TO postgres;
 
 --
--- TOC entry 186 (class 1259 OID 16423)
+-- TOC entry 188 (class 1259 OID 25069)
 -- Name: restritor_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -266,8 +284,8 @@ CREATE SEQUENCE restritor_id_seq
 ALTER TABLE restritor_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2439 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2173 (class 0 OID 0)
+-- Dependencies: 188
 -- Name: restritor_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -275,7 +293,7 @@ ALTER SEQUENCE restritor_id_seq OWNED BY restritor.id;
 
 
 --
--- TOC entry 2284 (class 2604 OID 16425)
+-- TOC entry 2020 (class 2604 OID 25071)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -283,7 +301,7 @@ ALTER TABLE ONLY pessoa_restricao_tcu ALTER COLUMN id SET DEFAULT nextval('pesso
 
 
 --
--- TOC entry 2287 (class 2604 OID 16426)
+-- TOC entry 2024 (class 2604 OID 25072)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -291,7 +309,7 @@ ALTER TABLE ONLY provenance ALTER COLUMN id SET DEFAULT nextval('provenance_id_s
 
 
 --
--- TOC entry 2288 (class 2604 OID 16427)
+-- TOC entry 2025 (class 2604 OID 25073)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -299,8 +317,8 @@ ALTER TABLE ONLY restritor ALTER COLUMN id SET DEFAULT nextval('restritor_id_seq
 
 
 --
--- TOC entry 2428 (class 0 OID 16531)
--- Dependencies: 187
+-- TOC entry 2158 (class 0 OID 25030)
+-- Dependencies: 183
 -- Data for Name: pessoa_restricao_cgu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -805,6 +823,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 29461	2	3	ANTONIO CARLOS SOUZA FONTES	17164826587	00008070620104058500	\N	1º Grau - TRF5 / Seção Judiciária de Sergipe / Subseção Judiciária de Sergipe / 2ª Vara	11/11/2014	Proibição - Lei de Improbidade
 29462	2	3	ANTONIO CARLOS TEODORO	79582761849	Nº 0008068-94.2012.8.26.0073 - Nº DE ORDEM 1511/20	\N	PROCURADORIA GERAL DO ESTADO	17/09/2013	Proibição - Lei de Improbidade
 29463	2	3	ANTONIO CARNEIRO FILHO	46553894434	00110375320094058400	\N	1º Grau - TRF5 / Seção Judiciária do Rio Grande do Norte / Subseção Judiciária do Rio Grande do Norte / 4ª Vara	24/09/2014	Proibição - Lei de Improbidade
+32680	2	3	LUIZ GONZAGA ALBACH	27288021815	2112005	\N	Justiça Estadual	21/08/2012	Proibição - Lei de Improbidade
 29464	2	3	ANTONIO CASEMIRO BELINATI	11597550949	178685520058160014	\N	Tribunal de Justiça do Estado do Paraná / 1º Grau - TJPR / LONDRINA / 1ª VARA DA FAZENDA PÚBLICA - LONDRINA (11ª V. CIVEL)	15/07/2015	Proibição - Lei de Improbidade
 29465	2	3	ANTONIO CELESTINO DA SILVA	72609958820	10782006	\N	Justiça Estadual	05/08/2011	Proibição - Lei de Improbidade
 29466	2	3	ANTONIO CELESTINO DA SILVA	72609958820	3570120090018270000000000	\N	Justiça Estadual	11/10/2012	Proibição - Lei de Improbidade
@@ -2273,6 +2292,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 30929	2	3	FRANCISCO JOSE DE OLIVEIRA COUTINHO	00847577449	00129943920008150011	\N	Tribunal de Justiça do Estado da Paraíba / 1º Grau - TJPB / CAMPINA GRANDE / 2ª VARA CÍVEL	15/03/2012	Proibição - Lei de Improbidade
 30930	2	3	FRANCISCO JOSÉ MOTA LUCIANO	25652850353	1821620048060159	\N	Tribunal de Justiça do Estado do Ceará / 1º Grau - TJCE / SABOEIRO / VARA UNICA DA COMARCA DE SABOEIRO	09/07/2014	Proibição - Lei de Improbidade
 30931	2	3	FRANCISCO JOSE NUNES DE OLIVEIRA	58510370249	172457620114013200	\N	1º Grau - TRF1 / Seção Judiciária Amazonas - SJAM / Capital SJAM / 1ª Vara SJAM	03/03/2015	Proibição - Lei de Improbidade
+30965	2	3	FRANCISCO ROSEMBERG DE SOUSA CAVALCANTE	23356634372	00165547620034058100	\N	Justiça Federal	06/09/2012	Proibição - Lei de Improbidade
 30932	2	3	FRANCISCO JOSE TEIXEIRA	19128487320	00005833820094058101	\N	1º Grau - TRF5 / Seção Judiciária do Ceará / Subseção Judiciária do Ceará / 15ª Vara	02/12/2014	Proibição - Lei de Improbidade
 30933	2	3	FRANCISCO JUCIER FURTADO	50947613404	00037937320094058400	\N	Justiça Federal	24/07/2012	Proibição - Lei de Improbidade
 30934	2	3	FRANCISCO JUCIER FURTADO	50947613404	00044331320084058400	\N	Conselho da Justiça Federal / Tribunal Regional Federal da 5ª Região / 2º Grau - TRF5 / GAB. DES. FEDERAL JOSÉ MARIA DE OLIVEIRA LUCENA	27/11/2014	Proibição - Lei de Improbidade
@@ -2306,7 +2326,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 30962	2	3	FRANCISCO RODRIGUES TORRES	04061543334	00000391020104058103	\N	Conselho da Justiça Federal / Tribunal Regional Federal da 5ª Região / 2º Grau - TRF5 / GAB. DES. FEDERAL FRANCISCO GERALDO APOLIANO DIAS	03/06/2014	Proibição - Lei de Improbidade
 30963	2	3	FRANCISCO ROSADO DA SILVA	00961043415	11620120001627	\N	Tribunal de Justiça do Estado da Paraíba / 1º Grau - TJPB / SANTANA DOS GARROTES / VARA ÚNICA DE SANTANA DOS GARROTES	09/02/2015	Proibição - Lei de Improbidade
 30964	2	3	FRANCISCO ROSADO DA SILVA	00961043415	00001972520114058202	\N	1º Grau - TRF5 / Seção Judiciária da Paraíba / Subseção Judiciária da Paraíba / 8ª Vara	20/01/2015	Proibição - Lei de Improbidade
-30965	2	3	FRANCISCO ROSEMBERG DE SOUSA CAVALCANTE	23356634372	00165547620034058100	\N	Justiça Federal	06/09/2012	Proibição - Lei de Improbidade
 30966	2	3	FRANCISCO SALES QUEIROZ	09739297404	0027000332006	\N	Justiça Estadual	16/06/2011	Proibição - Lei de Improbidade
 30967	2	3	FRANCISCO SEBASTIãO MENDES	07968701287	08000076520138010012	\N	Tribunal de Justiça do Estado do Acre / 1º Grau - TJAC / MANOEL URBANO / VARA ÚNICA	03/12/2014	Proibição - Lei de Improbidade
 30968	2	3	FRANCISCO SEBASTIãO MENDES	07968701287	00008299220108010012	\N	Tribunal de Justiça do Estado do Acre / 1º Grau - TJAC / MANOEL URBANO / VARA ÚNICA	30/04/2015	Proibição - Lei de Improbidade
@@ -2341,6 +2360,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 30997	2	3	Geiziane Aparecida Dias	03735751652	0073120013161	\N	Justiça Estadual	19/04/2012	Decisão judicial liminar/cautelar que impeça contratação
 30998	2	3	GELDES RONAN PASSOS JUNIOR	00070623112	10140.720688/2015-91	\N	Receita Federal do Brasil	15/06/2015	Suspensão - Lei de Licitações
 30999	2	3	Gelsi Ruiz	24802796854	00012324920144036107-	\N	Justiça Federal de São Paulo	29/01/2016	Decisão judicial liminar/cautelar que impeça contratação
+31069	2	3	GERSON GONçALVES CHICOUREL	06165621520	00000754320078200137	\N	Justiça Federal	14/10/2013	Proibição - Lei de Improbidade
 31000	2	3	GELSON GRILLO AMANTINO	24135160778	00194325020114025101	\N	Conselho da Justiça Federal / Tribunal Regional Federal da 2ª Região / 2º Grau - TRF2 / Desembargador Federal MARCELO PEREIRA DA SILVA	04/11/2015	Proibição - Lei de Improbidade
 31001	2	3	GEMIRO CASON	30089409868	50050438520144047114	\N	1º Grau - TRF4 / SEÇÃO JUDICIÁRIA DO RIO GRANDE DO SUL / SUBSEÇÃO JUDICIÁRIA DE LAJEADO / 1ª Vara Federal de Lajeado	08/05/2014	Proibição - Lei de Improbidade
 31002	2	3	GEMIRO CASON	30089409868	111872.1400.14-5	\N	Governo do Estado do Rio Grande do Sul	18/09/2014	Decisão judicial liminar/cautelar que impeça contratação
@@ -2410,7 +2430,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31065	2	3	GERSON FUJIBAYASHI	57283508104	00052567720118120017	\N	Tribunal de Justiça do Estado de Mato Grosso do Sul / 1º Grau - TJMS / NOVA ANDRADINA / 2ª VARA CÍVEL	20/02/2014	Proibição - Lei de Improbidade
 31066	2	3	GERSON GONçALVES CHICOUREL	06165621520	00002665420088200137	\N	Tribunal de Justiça do Estado do Rio Grande do Norte / 1º Grau - TJRN / CAMPO GRANDE / VARA ÚNICA DA COMARCA DE CAMPO GRANDE	10/04/2015	Proibição - Lei de Improbidade
 31067	2	3	GERSON GONçALVES CHICOUREL	06165621520	00000737320078200137	\N	Justiça Estadual	11/10/2013	Proibição - Lei de Improbidade
-31069	2	3	GERSON GONçALVES CHICOUREL	06165621520	00000754320078200137	\N	Justiça Federal	14/10/2013	Proibição - Lei de Improbidade
 31070	2	3	GERSON GONçALVES CHICOUREL	06165621520	00002610320068200137	\N	Justiça Federal	14/10/2013	Proibição - Lei de Improbidade
 31071	2	3	GERSON GONçALVES CHICOUREL	06165621520	00001871220078200137	\N	Justiça Federal	20/09/2013	Proibição - Lei de Improbidade
 31072	2	3	GERSON GONçALVES CHICOUREL	06165621520	00000710620078200137	\N	Justiça Federal	20/09/2013	Proibição - Lei de Improbidade
@@ -2654,6 +2673,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31308	2	3	ISMAEL DE ASSIS CARLOS	06811576820	00069696420118260319	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / LENCOIS PAULISTA / 2ª Vara	03/02/2014	Proibição - Lei de Improbidade
 31309	2	3	ISMAEL DE ASSIS CARLOS	06811576820	00006686720128260319	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / LENCOIS PAULISTA / 2ª Vara	17/07/2013	Proibição - Lei de Improbidade
 31310	2	3	ISMAEL DE ASSIS CARLOS	06811576820	00073758520118260319	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / LENCOIS PAULISTA / 2ª Vara	19/09/2013	Proibição - Lei de Improbidade
+31384	2	3	Jaime Fiomaro Dos Santos	73382310872	1890120020008394	\N	Justiça Estadual	10/10/2011	Proibição - Lei de Improbidade
 31311	2	3	ISMAEL DE ASSIS CARLOS	06811576820	00017633520128260319	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / LENCOIS PAULISTA / 2ª Vara	23/06/2014	Proibição - Lei de Improbidade
 31312	2	3	ISMAEL DOS SANTOS FREITAS	76674002291	0006961-64.2011.8.01.0002	\N	2a VARA CIVEL DA COMARCA DE CRUZEIRO DO SUL	22/10/2013	Proibição - Lei de Improbidade
 31313	2	3	ISMAEL LOPES PRADO	23632100934	00048897420068160160	\N	Tribunal de Justiça do Estado do Paraná / 1º Grau - TJPR / SARANDI / VARA CÍVEL - SARANDI	24/09/2012	Proibição - Lei de Improbidade
@@ -2725,7 +2745,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31381	2	3	JAIME CORREIA DE SOUZA	03608271449	0019005-46.2009.4.05.8300	\N	Justiça Federal	20/02/2013	Decisão judicial liminar/cautelar que impeça contratação
 31382	2	3	Jaime De Andrade Bitencourt	54778778804	200861030055362	\N	Justiça Federal	24/06/2010	Proibição - Lei de Improbidade
 31383	2	3	JAIME DOS SANTOS	47118490091	09510800012257	\N	Justiça Estadual	22/04/2013	Proibição - Lei de Improbidade
-31384	2	3	Jaime Fiomaro Dos Santos	73382310872	1890120020008394	\N	Justiça Estadual	10/10/2011	Proibição - Lei de Improbidade
 31385	2	3	Jaime Fiomaro Dos Santos	73382310872	1890120040094075	\N	Justiça Estadual	11/08/2010	Proibição - Lei de Improbidade
 31386	2	3	JAIME JOSÉ DE SANTANA	08168059204	00035603520128220003	\N	Tribunal de Justiça do Estado de Rondônia / 1º Grau - TJRO / JARU / 1ª VARA CIVEL	03/10/2014	Proibição - Lei de Improbidade
 31387	2	3	JAIME LUIZ MURARO	09847430900	17952020058110055	\N	Tribunal de Justiça do Estado de Mato Grosso / 1º Grau - TJMT / TANGARA DA SERRA / 4ª VARA CIVEL TANGARA DE SERRA	07/01/2016	Proibição - Lei de Improbidade
@@ -2761,6 +2780,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31417	2	3	JAIRO ASSIS BANDEIRA	33273243953	1693-75.2002.8.16.0083	\N	2a VARA CIVEL DA FRANCISCO BELTRAO - PR	13/04/2012	Proibição - Lei de Improbidade
 31418	2	3	JAIRO ASSIS BANDEIRA	33273243953	0002580-54.2005.8.16.0083	\N	2ª Vara de Francisco Beltrão (PR)	15/03/2012	Proibição - Lei de Improbidade
 31419	2	3	JAIRO AUGUSTO KUSCHEL	34333789087	000418-24.00/16-9	\N	Governo do Estado do Rio Grande do Sul	25/09/2015	Proibição - Lei de Improbidade
+31520	2	3	JOAO ANTONIO BELIZARIO LEME	52996999800	142005.1400.14-1	\N	Justiça Estadual	21/03/2013	Proibição - Lei de Improbidade
 31420	2	3	JAIRO AUGUSTO KUSCHEL	34333789087	11910500005928	\N	Tribunal de Justiça do Estado do Rio Grande do Sul / 1º Grau - TJRS / PORTO XAVIER / VARA JUDICIAL - PORTO XAVIER/RS	25/09/2015	Proibição - Lei de Improbidade
 31421	2	3	Jairo Carlos Da Silva	68261942449	200583000168164	\N	Justiça Federal	15/05/2007	Proibição - Lei de Improbidade
 31422	2	3	JAIRO CASARA	38696924991	20130016429	\N	Tribunais de Justiça Estaduais / Tribunal de Justiça do Estado de Santa Catarina / 2º Grau - TJSC / 3a Câmara de Direito Público	14/10/2014	Proibição - Lei de Improbidade
@@ -2793,6 +2813,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31449	2	3	JANIO UBIRAJARA TEIXEIRA DA SILVA	08388385291	200731000002415	\N	Justiça Federal	24/07/2012	Proibição - Lei de Improbidade
 31450	2	3	Jany Fernandes Júnior	09060688600	7065.04.0426.0/2014	\N	CAIXA ECONÔMICA FEDERAL	26/01/2015	Suspensão - Lei de Licitações
 31451	2	3	JAQUELINE AFONSO DE SOUZA RODRIGUES	00950606774	0398060002704	\N	Tribunal de Justiça do Estado de Minas Gerais / 1º Grau - TJMG / MAR DE ESPANHA / VARA ÚNICA DA COMARCA DE MAR DE ESPANHA	20/10/2014	Proibição - Lei de Improbidade
+31625	2	3	JOAO MARIA DOS SANTOS	81496443004	001051.1900.16-0	\N	SECRETARIA DA EDUCACAO	04/03/2016	Suspensão - Legislação Estadual
 31452	2	3	JAQUELINE APARECIDA DOS SANTOS MEDEIROS	10050184806	00136034620084036110	\N	1º Grau - TRF3 / Seção Judiciária de São Paulo / 10ª Subseção de Sorocaba / 1ª Vara	11/12/2015	Proibição - Lei de Improbidade
 31453	2	3	JAQUELINE MARIA RORIZ	26541262187	20110110454013	\N	Tribunais de Justiça Estaduais / Tribunal de Justiça do Distrito Federal e dos Territórios / 2º Grau - TJDFT / 2ª Turma Cível	09/07/2014	Proibição - Lei de Improbidade
 31454	2	3	JARDEL VIEIRA MACHADO NUNES	92497276749	024090133281	\N	Justiça Estadual	18/02/2013	Proibição - Lei de Improbidade
@@ -2861,7 +2882,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31517	2	3	JOAO ANTONIO BELIZARIO LEME	52996999800	02710500080359	\N	Tribunal de Justiça do Estado do Rio Grande do Sul / 1º Grau - TJRS / SANTA MARIA / 3ª Vara Cível - Santa Maria/RS	04/03/2015	Proibição - Lei de Improbidade
 31518	2	3	JOAO ANTONIO BELIZARIO LEME	52996999800	03110300028962	\N	Tribunal de Justiça do Estado do Rio Grande do Sul / 1º Grau - TJRS / SAO GABRIEL / 1ª VARA CIVEL	10/02/2014	Proibição - Lei de Improbidade
 31519	2	3	JOAO ANTONIO BELIZARIO LEME	52996999800	09410200039816	\N	Tribunal de Justiça do Estado do Rio Grande do Sul / 1º Grau - TJRS / CRISSIUMAL / VARA JUDICIAL - CRISSIUMAL/RS	11/08/2015	Proibição - Lei de Improbidade
-31520	2	3	JOAO ANTONIO BELIZARIO LEME	52996999800	142005.1400.14-1	\N	Justiça Estadual	21/03/2013	Proibição - Lei de Improbidade
 31521	2	3	JOãO ANTONIO DOS SANTOS	41762894815	04105706019968260053	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / SAO PAULO / 11ª FAZENDA PUBLICA DE CENTRAL	14/03/2016	Proibição - Lei de Improbidade
 31522	2	3	JOÃO ANTONIO PEREIRA	78555477891	0000471-09.2004.8.26.0541- Ação Civil Pública (2ª	\N	PODER JUDICIÁRIO	04/09/2015	Proibição - Lei de Improbidade
 31523	2	3	Joao Aristeu Barbosa	88869598853	9262006	\N	Justiça Estadual	04/11/2011	Proibição - Lei de Improbidade
@@ -2932,6 +2952,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31588	2	3	JOãO FRANCISCO BERCI	04264105803	00000186619968260291	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / JABOTICABAL / 1ª CUMULATIVA DE JABOTICABAL	04/09/2013	Proibição - Lei de Improbidade
 31623	2	3	JOÃO MARIA DE GOIS	15459462487	00002276020048200149	\N	Justiça Estadual	30/09/2013	Proibição - Lei de Improbidade
 31589	2	3	JOãO FRANCISCO BERTONCELLO DANIELETTO	01618357832	0015926-13.2008.8.26.0302/01 (4ª Vara Cível da Com	\N	PROCURADORIA GERAL DO ESTADO	16/04/2014	Proibição - Lei de Improbidade
+31626	2	3	JOAO MARIA FERREIRA DA SILVA	30733766404	00098934420094058400	\N	Justiça Federal	22/10/2012	Proibição - Lei de Improbidade
 31590	2	3	JOãO FRANCISCO BERTONCELLO DANIELETTO	01618357832	00159261320088260302	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / JAU / 4ª Vara Cível	16/04/2014	Proibição - Lei de Improbidade
 31591	2	3	João Gomes da Silva	03817156200	2007.39.00.000010-3	\N	Justiça Federal de Primeiro Grau no Pará	02/05/2013	Proibição - Lei de Improbidade
 31592	2	3	JOÃO IRINEU MARQUES	00535943806	N° 0018494-71.2006.8.28.0625 (1001/06) - Ação Civi	\N	PROCURADORIA GERAL DO ESTADO	25/09/2014	Proibição - Lei de Improbidade
@@ -2966,8 +2987,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31621	2	3	JOÃO MARIA DE GOIS	15459462487	00010214020094058400	\N	Justiça Federal	20/06/2011	Proibição - Lei de Improbidade
 31622	2	3	JOÃO MARIA DE GOIS	15459462487	00018883320094058400	\N	Justiça Federal	21/02/2011	Proibição - Lei de Improbidade
 31624	2	3	JOãO MARIA DE LIMA SILVA	04864902461	00057305020114058400	\N	1º Grau - TRF5 / Seção Judiciária do Rio Grande do Norte / Subseção Judiciária do Rio Grande do Norte / 5ª Vara	12/05/2014	Proibição - Lei de Improbidade
-31625	2	3	JOAO MARIA DOS SANTOS	81496443004	001051.1900.16-0	\N	SECRETARIA DA EDUCACAO	04/03/2016	Suspensão - Legislação Estadual
-31626	2	3	JOAO MARIA FERREIRA DA SILVA	30733766404	00098934420094058400	\N	Justiça Federal	22/10/2012	Proibição - Lei de Improbidade
 31627	2	3	JOãO MARIA VICENTE	32137486172	00021097020078120021	\N	Justiça Estadual	14/03/2013	Proibição - Lei de Improbidade
 31628	2	3	João Mariano Vieira	08544018220	00463389120068220015	\N	Justiça Estadual	10/02/2011	Proibição - Lei de Improbidade
 31629	2	3	JOãO MARTINS CARDOSO FILHO	03823440225	200939000031763	\N	Justiça Federal	24/07/2012	Proibição - Lei de Improbidade
@@ -3217,6 +3236,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31871	2	3	JOSE CARLOS HONORATO DA SILVA	70436479834	00011346220058260204	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / GENERAL SALGADO / Vara Única	07/11/2014	Proibição - Lei de Improbidade
 31872	2	3	JOSE CARLOS HONORATO DA SILVA	70436479834	00002148820058260204	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / GENERAL SALGADO / Vara Única	27/08/2012	Proibição - Lei de Improbidade
 31875	2	3	JOSE CARLOS MAINARDES DA SILVA	03090399830	Nº 0000751-38.2004.8.26.0263 - Controle 893/04 - A	\N	PROCURADORIA GERAL DO ESTADO	05/05/2015	Proibição - Lei de Improbidade
+32122	2	3	José Onilson Santos	26969556620	00112969020018220003	\N	Justiça Estadual	01/04/2009	Proibição - Lei de Improbidade
 31876	2	3	JOSE CARLOS MAINARDES DA SILVA	03090399830	00007513820048260263	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / ITAI / Vara Única	05/05/2015	Proibição - Lei de Improbidade
 31877	2	3	JOSÉ CARLOS MILANEZI	37702963700	00003015720094025005	\N	Conselho da Justiça Federal / Tribunal Regional Federal da 2ª Região / 2º Grau - TRF2 / Desembargador Federal ALUISIO MENDES	24/02/2015	Proibição - Lei de Improbidade
 31878	2	3	José Carlos Moreira	36421260810	18472000	\N	Tribunal de Justiça	11/01/2012	Proibição - Lei de Improbidade
@@ -3254,6 +3274,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 31910	2	3	Jose Custodio Borges Filho	13228613828	744	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / JALES / 2ª Vara	19/10/2015	Proibição - Lei de Improbidade
 31911	2	3	JOSé DA COSTA MARANHãO	39602176415	00111595520074058200	\N	Justiça Federal	18/10/2011	Proibição - Lei de Improbidade
 31912	2	3	José Da Silva	00234931191	4942004	\N	Justiça Estadual	15/05/2009	Proibição - Lei de Improbidade
+32123	2	3	Jose Osman Fernandes	07492960468	00115925120014058400	\N	Justiça Federal	03/06/2011	Proibição - Lei de Improbidade
 31913	2	3	JOSÉ DA SILVA CÂMARA	24184012434	08000094120124048403	\N	1º Grau - TRF5 / Seção Judiciária do Rio Grande do Norte / Subseção Judiciária do Rio Grande do Norte / 11ª Vara	28/10/2014	Proibição - Lei de Improbidade
 31914	2	3	JOSÉ DA SILVA CÂMARA	24184012434	0800094120124058403	\N	1º Grau - TRF5 / Seção Judiciária do Rio Grande do Norte / Subseção Judiciária do Rio Grande do Norte / 11ª Vara	28/10/2014	Proibição - Lei de Improbidade
 31915	2	3	JOSÉ DE ALENCAR RANGEL	02264250372	00001985020048140125	\N	Tribunal de Justiça do Estado do Pará / 1º Grau - TJPA / SAO GERALDO DO ARAGUAIA / VARA UNICA	11/03/2014	Proibição - Lei de Improbidade
@@ -3463,8 +3484,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32119	2	3	JOSé NILTON DE FIGUEIREDO	13052470434	00015773920094058401	\N	Conselho da Justiça Federal / Tribunal Regional Federal da 5ª Região / 2º Grau - TRF5 / GAB. DES. FEDERAL FRANCISCO DE QUEIROZ BEZERRA CAVALCANTI	15/05/2014	Proibição - Lei de Improbidade
 32120	2	3	JOSE NUNES DE OLIVEIRA	00881074349	00000273720078180106	\N	Tribunal de Justiça do Estado do Piauí / 1º Grau - TJPI / NAZARE DO PIAUI / VARA UNICA DE NAZARÉ	11/04/2014	Proibição - Lei de Improbidade
 32121	2	3	JOSé OLIVEIRA FERREIRA	47615524415	00096149220084058400	\N	1º Grau - TRF5 / Seção Judiciária do Rio Grande do Norte / Subseção Judiciária do Rio Grande do Norte / 1ª Vara	06/04/2015	Proibição - Lei de Improbidade
-32122	2	3	José Onilson Santos	26969556620	00112969020018220003	\N	Justiça Estadual	01/04/2009	Proibição - Lei de Improbidade
-32123	2	3	Jose Osman Fernandes	07492960468	00115925120014058400	\N	Justiça Federal	03/06/2011	Proibição - Lei de Improbidade
 32124	2	3	JOSE OSTENIO PEREIRA NOBRE	33844720634	000018689420084058103	\N	1º Grau - TRF5 / Seção Judiciária do Ceará / Subseção Judiciária do Ceará / 27ª Vara	11/09/2014	Proibição - Lei de Improbidade
 32125	2	3	JOSÉ OTÁVIO DA SILVA	37438794920	2012006	\N	Tribunal de Justiça do Estado do Paraná / 1º Grau - TJPR / SANTO ANTONIO DA PLATINA / VARA CÍVEL - SANTO ANTONIO DA PLATINA	10/04/2014	Proibição - Lei de Improbidade
 32126	2	3	JOSE PAULO DA COSTA HOFFMEISTER	35856149068	10700008180	\N	Tribunal de Justiça do Estado do Rio Grande do Sul / 1º Grau - TJRS / MOSTARDAS / VARA JUDICIAL	03/06/2014	Proibição - Lei de Improbidade
@@ -3536,6 +3555,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32192	2	3	JOSE RONALDO DE SOUZA	50888277172	200802631031	\N	Justiça Estadual	12/02/2014	Proibição - Lei de Improbidade
 32193	2	3	JOSE ROQUE DE OLIVEIRA FILHO	13422670874	00000147320098260420	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / AVARE / Vara Única-Foro Distrital de Paranapanema	15/07/2015	Proibição - Lei de Improbidade
 32194	2	3	JOSÉ ROSENDO LUIS DE OLIVEIRA	44303653420	00024473920084058201	\N	1º Grau - TRF5 / Seção Judiciária da Paraíba / Subseção Judiciária da Paraíba / 4ª Vara	09/12/2014	Proibição - Lei de Improbidade
+32263	2	3	JOSIVALDA MATIAS DE SOUSA	62882619472	00023117420104058200	\N	Justiça Federal	26/04/2013	Proibição - Lei de Improbidade
 32195	2	3	JOSÉ RUBENS LEITE	04199188843	00000147320098260420	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / AVARE / Vara Única-Foro Distrital de Paranapanema	15/07/2015	Proibição - Lei de Improbidade
 32196	2	3	JOSé RUZ CAPUTI	31229174834	00078169320048260066	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / BARRETOS / 2ª Vara Cível	07/10/2015	Proibição - Lei de Improbidade
 32197	2	3	José Sadao Koshiyama	57362696868	63801200060044501	\N	Justiça Estadual	04/09/2012	Proibição - Lei de Improbidade
@@ -3605,7 +3625,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32261	2	3	JOSIVALDA MATIAS DE SOUSA	62882619472	00073577820094058200	\N	1º Grau - TRF5 / Seção Judiciária da Paraíba / Subseção Judiciária da Paraíba / 12ª Vara	20/10/2014	Proibição - Lei de Improbidade
 32332	2	3	JUVÊNCIO COMPANHEIRO MATOS	14903342620	200938070060177	\N	Justiça Federal	03/05/2012	Proibição - Lei de Improbidade
 32262	2	3	JOSIVALDA MATIAS DE SOUSA	62882619472	200982000073570	\N	Conselho da Justiça Federal / Tribunal Regional Federal da 5ª Região / 2º Grau - TRF5 / GAB. DES. FEDERAL PAULO ROBERTO DE OLIVEIRA LIMA	23/09/2014	Proibição - Lei de Improbidade
-32263	2	3	JOSIVALDA MATIAS DE SOUSA	62882619472	00023117420104058200	\N	Justiça Federal	26/04/2013	Proibição - Lei de Improbidade
 32264	2	3	JOSIVANDO DO CARMO MELO	39208230449	00002092219968220001	\N	Tribunal de Justiça do Estado de Rondônia / 1º Grau - TJRO / PORTO VELHO / 2ª VARA DE FAZENDA PÚBLICA	08/06/2015	Proibição - Lei de Improbidade
 32265	2	3	JOSMACELMO GERALDO DA SILVA	43862438368	00003068720074058102	\N	1º Grau - TRF5 / Seção Judiciária do Ceará / Subseção Judiciária do Ceará / 16ª Vara	25/06/2014	Proibição - Lei de Improbidade
 32266	2	3	Josué Crisóstomo	32348452804	01064093820018220014	\N	Justiça Estadual	18/12/2009	Proibição - Lei de Improbidade
@@ -3747,6 +3766,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32402	2	3	LENINE LAURO PADILHA DE ARRUDA	16441990172	62579620048110041	\N	Justiça Estadual	03/09/2012	Proibição - Lei de Improbidade
 32403	2	3	Lenita Maria Donato Leite	27569966880	7063.04.2331.0/2013-001	\N	CAIXA ECONÔMICA FEDERAL	12/09/2014	Suspensão - Lei de Licitações
 32404	2	3	LENOILSON PASSOS DA SILVA	40563880325	24944520088100051	\N	Tribunal de Justiça do Estado do Maranhão / 1º Grau - TJMA / PEDREIRAS / 1ª VARA DE PEDREIRAS	18/08/2015	Proibição - Lei de Improbidade
+32751	2	3	MANOEL AMâNCIO DA SILVA	25890794434	00271033020034058300	\N	Justiça Federal	02/08/2013	Proibição - Lei de Improbidade
 32405	2	3	LENOILSON PASSOS DA SILVA	40563880325	27897720118100051	\N	Tribunal de Justiça do Estado do Maranhão / 1º Grau - TJMA / PEDREIRAS / 1ª VARA DE PEDREIRAS	23/02/2016	Proibição - Lei de Improbidade
 32406	2	3	LENOILSON PASSOS DA SILVA	40563880325	27248220118100051	\N	Tribunal de Justiça do Estado do Maranhão / 1º Grau - TJMA / PEDREIRAS / 1ª VARA DE PEDREIRAS	23/02/2016	Proibição - Lei de Improbidade
 32407	2	3	LENOILSON PASSOS DA SILVA	40563880325	4723820138100051	\N	Tribunal de Justiça do Estado do Maranhão / 1º Grau - TJMA / PEDREIRAS / 1ª VARA DE PEDREIRAS	23/02/2016	Proibição - Lei de Improbidade
@@ -3952,6 +3972,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32608	2	3	LUIZ ANTONIO TREVISAN VEDOIN	59456353168	200935000023675	\N	Justiça Federal	13/12/2012	Proibição - Lei de Improbidade
 32609	2	3	LUIZ ANTONIO TREVISAN VEDOIN	59456353168	5004927-03.2014.4.04.7010/PR	\N	1a VARA FEDERAL DE CAMPO MOURAO/PR	14/10/2015	Proibição - Lei de Improbidade
 32610	2	3	LUIZ ANTONIO TREVISAN VEDOIN	59456353168	00130488920084058400	\N	1º Grau - TRF5 / Seção Judiciária do Rio Grande do Norte / Subseção Judiciária do Rio Grande do Norte / 4ª Vara	15/06/2015	Proibição - Lei de Improbidade
+32679	2	3	LUIZ GONZAGA ALBACH	27288021815	582.01.2005.002280-4/000000-000 (Ordem 211/2005 AF	\N	PROCURADORIA GERAL DO ESTADO	21/08/2012	Proibição - Lei de Improbidade
 32611	2	3	LUIZ ANTONIO TREVISAN VEDOIN	59456353168	50049270320144047010	\N	1º Grau - TRF4 / SEÇÃO JUDICIÁRIA DO PARANÁ / SUBSEÇÃO JUDICIÁRIA DE CAMPO MOURÃO / 1ª Vara Federal de Campo Mourão	16/09/2015	Proibição - Lei de Improbidade
 32612	2	3	LUIZ ANTONIO TREVISAN VEDOIN	59456353168	5035725-36.2012.4.04.7100/RS	\N	Justiça Federal do Rio Grande do Sul	18/04/2016	Proibição - Lei de Improbidade
 32613	2	3	LUIZ ANTONIO TREVISAN VEDOIN	59456353168	200843000073710	\N	1º Grau - TRF1 / Seção Judiciária Tocantins - SJTO / Capital SJTO / 2ª - PALMAS	18/08/2015	Proibição - Lei de Improbidade
@@ -4020,8 +4041,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32676	2	3	LUIZ FERNANDO VIEIRA	14833174049	004410.0300.15-6	\N	Governo do Estado do Rio Grande do Sul	11/01/2011	Proibição - Lei de Improbidade
 32677	2	3	Luiz Gaston Hinojosa Nunez	07690070230	0041191-18.2009.8.22.0003	\N	1ª Vara Cível de Jaru	13/12/2013	Proibição - Lei de Improbidade
 32678	2	3	LUIZ GONZAGA ALBACH	27288021815	Nº 0000835-86.2003.8.26.0582 (Vara Única  do Foro	\N	PROCURADORIA GERAL DO ESTADO	04/11/2013	Proibição - Lei de Improbidade
-32679	2	3	LUIZ GONZAGA ALBACH	27288021815	582.01.2005.002280-4/000000-000 (Ordem 211/2005 AF	\N	PROCURADORIA GERAL DO ESTADO	21/08/2012	Proibição - Lei de Improbidade
-32680	2	3	LUIZ GONZAGA ALBACH	27288021815	2112005	\N	Justiça Estadual	21/08/2012	Proibição - Lei de Improbidade
 32681	2	3	LUIZ GONZAGA ALBACH	27288021815	582.01.2005.002458-4/000000-000 (Ordem 229/2005) (	\N	PROCURADORIA GERAL DO ESTADO	30/07/2012	Proibição - Lei de Improbidade
 32682	2	3	LUIZ GONZAGA ALBACH	27288021815	5820120050024584	\N	Justiça Estadual	30/07/2012	Proibição - Lei de Improbidade
 32683	2	3	LUIZ GONZAGA AMORIM CARDOSO	01641131500	000000630420074013302	\N	1º Grau - TRF1 / Seção Judiciária Bahia - SJBA / SSJ Campo Formoso CFS/SJBA / CAMPO FORMOSO	22/10/2013	Proibição - Lei de Improbidade
@@ -4092,7 +4111,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 32748	2	3	MAICO ROBERTO GRALOW	03277468909	00017286720028240065	\N	Tribunal de Justiça do Estado de Santa Catarina / 1º Grau - TJSC / SAO JOSE DO CEDRO / Vara Única da Comarca de São José do Cedro	07/05/2015	Proibição - Lei de Improbidade
 32749	2	3	MAIRA DO NASCIMENTO	05005233989	00017286720028240065	\N	Tribunal de Justiça do Estado de Santa Catarina / 1º Grau - TJSC / SAO JOSE DO CEDRO / Vara Única da Comarca de São José do Cedro	07/10/2015	Proibição - Lei de Improbidade
 32750	2	3	MANOEL ALICIO DA SILVA SFAIR	15137384291	91133920114013100	\N	1º Grau - TRF1 / Seção Judiciária Amapá - SJAP / Capital SJAP / 6ª Vara SJAP	16/09/2014	Proibição - Lei de Improbidade
-32751	2	3	MANOEL AMâNCIO DA SILVA	25890794434	00271033020034058300	\N	Justiça Federal	02/08/2013	Proibição - Lei de Improbidade
 32752	2	3	MANOEL ANTONIO DA SILVA FILHO	17860245353	200937000087740	\N	1º Grau - TRF1 / Seção Judiciária Maranhão - SJMA / Capital SJMA / 6ª VARA SJMA	19/01/2015	Proibição - Lei de Improbidade
 32753	2	3	Manoel Antônio De Moraes Ourique	19617739020	12210100024594	\N	Justiça Estadual	03/02/2009	Proibição - Lei de Improbidade
 32754	2	3	MANOEL ANTONIO LEITÃO	80295410825	0770120070154204	\N	Justiça Federal	03/06/2013	Proibição - Lei de Improbidade
@@ -4411,6 +4429,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 33067	2	3	MARIA MADALENA  FERREIRA	36424242953	Não Identificado	\N	Justiça Estadual	19/05/2011	Suspensão - Legislação Estadual
 33068	2	3	MARIA MADALENA GARCIA	32428758934	0130011-68.1999.8.22.0001	\N	Justiça do Estado de Rondônia	05/03/2013	Proibição - Lei de Improbidade
 33069	2	3	MARIA NECY DA SILVA BEZERRA	43208215487	00075153920008170810	\N	Justiça Estadual	08/10/2012	Proibição - Lei de Improbidade
+33104	2	3	MARINO DIAS MOURA	09107100825	01019115820068260515	\N	Justiça Estadual	06/11/2013	Proibição - Lei de Improbidade
 33070	2	3	MARIA NEUSA RODRIGUES BELLINI	46391240906	50070477420134047003	\N	1º Grau - TRF4 / SEÇÃO JUDICIÁRIA DO PARANÁ / SUBSEÇÃO JUDICIÁRIA DE MARINGÁ / 2ª Vara Federal de Maringá	24/04/2015	Proibição - Lei de Improbidade
 33071	2	3	MARIA NEUSA RODRIGUES BELLINI	46391240906	5007047-74.2013.4.04.7003/PR	\N	Justiça Federal do Paraná	24/04/2015	Proibição - Lei de Improbidade
 33072	2	3	MARIA NILZA DOS SANTOS CORREIA	43617719449	00074081020094058000	\N	Justiça Federal	17/08/2012	Proibição - Lei de Improbidade
@@ -4445,7 +4464,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 33101	2	3	MARINEZ RODRIGUES DE OLIVEIRA	22316892353	00128362720104058100	\N	1º Grau - TRF5 / Seção Judiciária do Ceará / Subseção Judiciária do Ceará / 8ª Vara	17/10/2014	Proibição - Lei de Improbidade
 33102	2	3	MARINEZ RODRIGUES DE OLIVEIRA	22316892353	00009373220104058100	\N	Justiça Federal	31/08/2012	Proibição - Lei de Improbidade
 33103	2	3	MARINO DE LIMA	88522156891	8622012	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / IGUAPE / 2ª Vara	11/07/2014	Proibição - Lei de Improbidade
-33104	2	3	MARINO DIAS MOURA	09107100825	01019115820068260515	\N	Justiça Estadual	06/11/2013	Proibição - Lei de Improbidade
 33105	2	3	Marino Itacir Francisco Da Silva	64691071920	018050184684	\N	Justiça Estadual	15/06/2012	Proibição - Lei de Improbidade
 33106	2	3	MáRIO AGOSTINHO NETO	07777272420	00023177820104058201	\N	Justiça Federal	22/04/2013	Proibição - Lei de Improbidade
 33107	2	3	Mário Augusto Peregrino Toscano Lyra	15020029149	00110906820084058400	\N	Justiça Federal	28/09/2011	Proibição - Lei de Improbidade
@@ -4694,6 +4712,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 33349	2	3	NéLSON CéSAR DE OLIVEIRA	96637250600	702084941328	\N	Tribunal de Justiça do Estado de Minas Gerais / 1º Grau - TJMG / UBERLÂNDIA / 1ª VARA DA FAZENDA PÚBLICA E AUTARQUIAS	13/08/2014	Proibição - Lei de Improbidade
 33350	2	3	Nelson Costa Ribeiro	12112313649	0620030017664	\N	Justiça Estadual	02/07/2007	Proibição - Lei de Improbidade
 33389	2	3	NEURIZELIA ALVES VIEIRA	91551498553	200633070094758	\N	1º Grau - TRF1 / Seção Judiciária Bahia - SJBA / SSJ Vitória da Conquista VCA/SJBA / 1ª VARA	19/04/2010	Proibição - Lei de Improbidade
+33390	2	3	Neusa do Carmo dos Santos	56942621900	0011803-49.2001.8.24.0018	\N	TJ de Santa Catarina - Comarca de Chapecó	15/02/2016	Proibição - Lei de Improbidade
 33351	2	3	NELSON DE OLIVEIRA CORREA	48897892787	00026190320118080006	\N	Tribunal de Justiça do Estado do Espírito Santo / 1º Grau - TJES / ARACRUZ / VARA FAZ. PÚBLICA EST/ MUN / REG PÚB / MEIO AMBIENTE	08/04/2016	Proibição - Lei de Improbidade
 33352	2	3	Nelson Ebel	22982736004	00710900026601	\N	Justiça Estadual	11/05/2009	Proibição - Lei de Improbidade
 33353	2	3	Nelson Evangelista Freire	43715060468	200382010056992	\N	Justiça Federal	23/10/2008	Proibição - Lei de Improbidade
@@ -4731,7 +4750,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 33385	2	3	NERMISIO MACHADO DE MIRANDA	02151316149	50006368520138272720	\N	Tribunal de Justiça do Estado de Tocantins / 1º Grau - TJTO / GOIATINS / JUÍZO ÚNICO	15/12/2015	Proibição - Lei de Improbidade
 33386	2	3	Nery Bettega	08949727153	052970014424-001-001	\N	2ª Vara Cível da Comarca de Porto União	28/08/2012	Proibição - Lei de Improbidade
 33387	2	3	NERY CARLOS ARANTES SCHEIDT	34434143972	008030228945	\N	Justiça Estadual	19/05/2010	Proibição - Lei de Improbidade
-33390	2	3	Neusa do Carmo dos Santos	56942621900	0011803-49.2001.8.24.0018	\N	TJ de Santa Catarina - Comarca de Chapecó	15/02/2016	Proibição - Lei de Improbidade
 33391	2	3	Neusa Solange Gonçalves	45891028034	200571150036919	\N	Justiça Federal	16/05/2012	Proibição - Lei de Improbidade
 33392	2	3	NEUZA MARIA SGANDERLA	16024818904	00034853019998240024	\N	Tribunal de Justiça do Estado de Santa Catarina / 1º Grau - TJSC / FRAIBURGO / 2ª VARA	29/10/2014	Proibição - Lei de Improbidade
 33393	2	3	NEUZARI CORREIA PINHEIRO	09115463249	05008362820088010002	\N	Tribunal de Justiça do Estado do Acre / 1º Grau - TJAC / CRUZEIRO DO SUL / 2ª VARA CÍVEL	08/04/2013	Proibição - Lei de Improbidade
@@ -4766,6 +4784,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 33422	2	3	NILSON FRANCISCO DE JESUS	25843699234	00837258220068220002	\N	Tribunal de Justiça do Estado de Rondônia / 1º Grau - TJRO / ARIQUEMES / 2ª VARA CIVEL	24/03/2015	Proibição - Lei de Improbidade
 33423	2	3	NILSON GUEDES DE CARVALHO	13040677420	00251674820048200001	\N	Tribunal de Justiça do Estado do Rio Grande do Norte / 1º Grau - TJRN / NATAL / 1ª VARA DA FAZENDA PÚBLICA DA COMARCA DE NATAL	13/03/2014	Proibição - Lei de Improbidade
 33495	2	3	Olivar Vieira de Matos	25831186172	2011.01.1.009149-6	\N	Governo do Distrito Federal	16/09/2015	Proibição - Lei de Improbidade
+34132	2	3	SALVADOR SANTOS	24293580425	00027343019984058402	\N	Justiça Federal	05/03/2013	Proibição - Lei de Improbidade
 33424	2	3	NILSON RODRIGUES PEREIRA	24859737172	20020110360529	\N	Tribunal de Justiça do Distrito Federal e dos Territórios / 1º Grau - TJDFT / BRASÍLIA / 1ª VARA DA FAZENDA PÚBLICA - DISTRITO FEDERAL	11/02/2014	Proibição - Lei de Improbidade
 33425	2	3	NILSON ULOFFO DE SOUZA	03808049804	00001516519998260627	\N	Justiça Estadual	07/12/2012	Proibição - Lei de Improbidade
 33426	2	3	NILSON ULOFFO DE SOUZA	03808049804	00006759120018260627	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / TEODORO SAMPAIO / Vara Única	30/04/2013	Proibição - Lei de Improbidade
@@ -5473,7 +5492,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 34129	2	3	SALIM MANSUR SZAJUBOCK	00397325843	0025413-22.2001.8.26.0053 (9ª Vara da Fazenda Públ	\N	PODER JUDICIÁRIO	03/04/2012	Proibição - Lei de Improbidade
 34130	2	3	Salomão De Araújo Silva	23073810234	200432000007837	\N	Justiça Federal	08/11/2011	Proibição - Lei de Improbidade
 34131	2	3	SALVADOR RAMOS	01605496987	00165126920088160030	\N	Tribunal de Justiça do Estado do Paraná / 1º Grau - TJPR / FOZ DO IGUACU / 1ª VARA DA FAZENDA PÚBLICA - FOZ DO IGUAÇU	01/08/2013	Proibição - Lei de Improbidade
-34132	2	3	SALVADOR SANTOS	24293580425	00027343019984058402	\N	Justiça Federal	05/03/2013	Proibição - Lei de Improbidade
 34133	2	3	SAMUEL ADEMIR DA SILVA	01524915890	3190119960007902	\N	Justiça Estadual	27/10/2011	Proibição - Lei de Improbidade
 34134	2	3	SAMUEL JOSé CLEMENTE	10924340894	00004385819998260132	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / CATANDUVA / 3ª Vara Cível	07/03/2014	Proibição - Lei de Improbidade
 34135	2	3	Samuel Rodrigues De Santana Silva	13318114812	6540120040020141000000000	\N	Justiça Estadual	11/02/2011	Proibição - Lei de Improbidade
@@ -5614,6 +5632,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 34270	2	3	SILVANO PINHEIRO DA CâMARA	04985133434	00108288420094058400	\N	Justiça Federal	22/11/2011	Proibição - Lei de Improbidade
 34271	2	3	Silvério Fortunato	37194623072	01310400018758	\N	Justiça Estadual	21/05/2010	Proibição - Lei de Improbidade
 34306	2	3	Sinezio Holanda Regalado	03269454406	00003037720058200140	\N	Justiça Estadual	27/04/2011	Proibição - Lei de Improbidade
+34307	2	3	SINVAL SOARES LEITE	19638477687	00020848720074013807	\N	Justiça Federal	17/07/2013	Proibição - Lei de Improbidade
 34272	2	3	SILVERIO LUERSEN	04087313034	00157311520058210159	\N	Tribunal de Justiça do Estado do Rio Grande do Sul / 1º Grau - TJRS / TEUTONIA / 2ª VARA JUDICIAL - TEUTONIA/RS	19/02/2016	Proibição - Lei de Improbidade
 34273	2	3	SILVESTRE DOMANSKI	25284649915	AUTOS N. 5003990-93.2014.404.7203	\N	1ª Vara Federal de Joaçaba	17/06/2015	Proibição - Lei de Improbidade
 34274	2	3	SILVESTRE DOMANSKI	25284649915	50039909320144047203	\N	1º Grau - TRF4 / SEÇÃO JUDICIÁRIA DE SANTA CATARINA / SUBSEÇÃO JUDICIÁRIA DE JOAÇABA / 1ª Vara Federal de Joaçaba	17/06/2015	Proibição - Lei de Improbidade
@@ -5648,7 +5667,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 34303	2	3	Simone Freitas Chaves	88765733649	0073120013161	\N	Justiça Estadual	19/04/2012	Decisão judicial liminar/cautelar que impeça contratação
 34304	2	3	SIMONE SUELY MACHADO DUARTE	12352446449	00098934420094058400	\N	Justiça Federal	22/10/2012	Proibição - Lei de Improbidade
 34305	2	3	Sinesio Jose Santos Matos	17336759572	200633040035437	\N	Justiça Federal	11/07/2012	Proibição - Lei de Improbidade
-34307	2	3	SINVAL SOARES LEITE	19638477687	00020848720074013807	\N	Justiça Federal	17/07/2013	Proibição - Lei de Improbidade
 34308	2	3	SINVAL SOARES LEITE	19638477687	2006.38.07.003509-7 - 0003412-86.2006.4.01.3807	\N	Justiça Federal	25/09/2013	Proibição - Lei de Improbidade
 34309	2	3	SINVAL SOARES LEITE	19638477687	00034128620064013807	\N	1º Grau - TRF1 / Seção Judiciária Minas Gerais - SJMG / SSJ Montes Claros - MCL/SJMG / 1ª VARA SSJ MONTES CLAROS	25/09/2013	Proibição - Lei de Improbidade
 34310	2	3	SINVALDO CARNEIRO ASSUNçãO	78634075834	744	\N	Tribunal de Justiça do Estado de São Paulo / 1º Grau - TJSP / JALES / 2ª Vara	19/10/2015	Proibição - Lei de Improbidade
@@ -5684,6 +5702,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 34340	2	3	TALLES DE JESUS RIBEIRO DANTAS	00708422306	7070.04.2143.01/2013	\N	Caixa Econômica Federal	24/07/2015	Suspensão - Lei de Licitações
 34341	2	3	TALVANI LUIZ RUOSO	25003399049	13310100009619	\N	Justiça Federal	28/06/2013	Proibição - Lei de Improbidade
 34342	2	3	TAMARA DIEGUES SILVA CORDEIRO	80635326515	200933070000620	\N	Justiça Federal	29/11/2012	Proibição - Lei de Improbidade
+34376	2	3	THAIS RABELO MOREIRA	83828150306	Processo Adm nº. 94 ISSN 1677-7069	\N	CAIXA ECONÔMICA FEDERAL	28/07/2015	Suspensão - Lei de Licitações
 34343	2	3	TANIA CRISTINA MARTINS PIROLO	56360177900	50018918220114047001	\N	1º Grau - TRF4 / SEÇÃO JUDICIÁRIA DO PARANÁ / SUBSEÇÃO JUDICIÁRIA DE LONDRINA / 3ª Vara Federal de Londrina	09/03/2015	Proibição - Lei de Improbidade
 34344	2	3	TANIA CRISTINA MARTINS PIROLO	56360177900	50005781820134047001	\N	1º Grau - TRF4 / SEÇÃO JUDICIÁRIA DO PARANÁ / SUBSEÇÃO JUDICIÁRIA DE LONDRINA / 3ª Vara Federal de Londrina	27/10/2015	Proibição - Lei de Improbidade
 34345	2	3	TÂNIA MARIA LARA SCHELL	56535317072	08610300141938	\N	Justiça Estadual	27/08/2007	Proibição - Lei de Improbidade
@@ -5717,7 +5736,6 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 34373	2	3	Terto José Dos Santos	55584250597	200183080137	\N	Justiça Estadual	15/02/2011	Proibição - Lei de Improbidade
 34374	2	3	THABATA DE MATTOS MACEDO	02851617923	50006401420114047200	\N	Justiça Federal	16/08/2013	Proibição - Lei de Improbidade
 34375	2	3	THAILANE SABRINA FERREIRA MENDES	01837751200	00090697920148220001	\N	Tribunal de Justiça do Estado de Rondônia / 1º Grau - TJRO / PORTO VELHO / 2ª VARA DE FAZENDA PÚBLICA	06/07/2015	Proibição - Lei de Improbidade
-34376	2	3	THAIS RABELO MOREIRA	83828150306	Processo Adm nº. 94 ISSN 1677-7069	\N	CAIXA ECONÔMICA FEDERAL	28/07/2015	Suspensão - Lei de Licitações
 34377	2	3	Thaiza Andressa Prado Leza	02575481147	007080011434	\N	Justiça Estadual	27/01/2010	Proibição - Lei de Improbidade
 34378	2	3	THELMA ARAúJO PEREIRA	41670345149	20020110360529	\N	Tribunal de Justiça do Distrito Federal e dos Territórios / 1º Grau - TJDFT / BRASÍLIA / 1ª VARA DA FAZENDA PÚBLICA - DISTRITO FEDERAL	11/02/2014	Proibição - Lei de Improbidade
 34379	2	3	Theonas Silva Rebouças	07091796500	200933080000274	\N	Justiça Federal	31/10/2012	Proibição - Lei de Improbidade
@@ -6097,7 +6115,7 @@ COPY pessoa_restricao_cgu (id, restritor_id, provenance_id, nome, cpf, numproces
 
 
 --
--- TOC entry 2440 (class 0 OID 0)
+-- TOC entry 2174 (class 0 OID 0)
 -- Dependencies: 182
 -- Name: pessoa_restricao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -6106,7 +6124,7 @@ SELECT pg_catalog.setval('pessoa_restricao_id_seq', 34751, true);
 
 
 --
--- TOC entry 2422 (class 0 OID 16395)
+-- TOC entry 2156 (class 0 OID 25020)
 -- Dependencies: 181
 -- Data for Name: pessoa_restricao_tcu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -6643,6 +6661,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 7330	1	2	ANA CECÍLIA LEITE LIRA	65362110578	42503404	011.587/2006-7	AL	AC 2562/2010-1ª CÂMARA ; AC 6844/2011-1ª CÂMARA	2011/09/29 00:00:00
 7331	1	2	ANA CLÁUDIA APARECIDA LISBOA	53170300130	44920376	020.644/2010-8	MT	AC 3262/2012-PLENÁRIO ; AC 3044/2013-PLENÁRIO ; AC 0361/2016-2ª CÂMARA	2016/04/21 00:00:00
 7332	1	2	ANA CLÁUDIA MOREIRA BRANDÃO	89212827772	44969136	023.216/2010-7	RJ	AC 8219/2011-2ª CÂMARA	2011/12/15 00:00:00
+7379	1	2	ANA PAULA SOARES DOS SANTOS	77720288734	50906282	034.256/2013-0	RJ	AC 3279/2014-PLENÁRIO	2015/04/09 00:00:00
 7333	1	2	ANA CRISTINA DE AQUINO CUNHA	46210911153	3517473	003.192/2001-0	DF	AC 33/2005-PLENÁRIO ; AC 1069/2009-PLENÁRIO ; AC 2243/2014-PLENÁRIO ; AC 39/2015-PLENÁRIO	2009/02/25 00:00:00
 7334	1	2	ANA CRISTINA DE AQUINO CUNHA	46210911153	3516951	003.089/2001-9	DF	AC 1693/2003-PLENÁRIO ; AC 479/2010-PLENÁRIO ; AC 1558/2012-PLENÁRIO ; AC 756/2013-PLENÁRIO	2014/09/16 00:00:00
 7335	1	2	ANA DALVA DE ANDRADE FERREIRA	20942931220	48711289	018.762/2012-3	AP	AC 2959/2014-1ª CÂMARA ; AC 5160/2015-1ª CÂMARA	2015/10/22 00:00:00
@@ -6687,7 +6706,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 7376	1	2	ANA PAULA DOS REIS CARVALHO	04829887621	4172538	009.120/2004-2	MG	AC 1609/2007-PLENÁRIO ; AC 2436/2007-PLENÁRIO ; AC 1001/2009-PLENÁRIO	2009/10/28 00:00:00
 7377	1	2	ANA PAULA SIMÕES	77590031704	44000165	005.694/2009-6	RJ	AC 6536/2009-2ª CÂMARA	2010/03/19 00:00:00
 7378	1	2	ANA PAULA SOARES DOS SANTOS	77720288734	49781046	006.193/2013-7	RJ	AC 168/2015-PLENÁRIO	2015/03/18 00:00:00
-7379	1	2	ANA PAULA SOARES DOS SANTOS	77720288734	50906282	034.256/2013-0	RJ	AC 3279/2014-PLENÁRIO	2015/04/09 00:00:00
 7380	1	2	ANA PAULA SOARES DOS SANTOS	77720288734	51168760	006.422/2014-4	RJ	AC 2964/2015-PLENÁRIO	2016/02/12 00:00:00
 7381	1	2	ANA PAULA VIEIRA DA SILVA	65976444415	43939069	000.312/2009-1	PE	AC 1153/2011-1ª CÂMARA ; AC 2216/2012-1ª CÂMARA	2011/04/09 00:00:00
 7382	1	2	ANA REGINA SIMÕES PALHARES	38495341700	45730717	009.233/2011-3	RJ	AC 3651/2013-PLENÁRIO	2014/07/02 00:00:00
@@ -6732,6 +6750,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 7420	1	2	ANDRE LUIZ LACERDA SILVA	08624947880	4413789	015.461/2005-5	DF	AC 7169/2010-2ª CÂMARA ; AC 4242/2012-2ª CÂMARA	2011/03/05 00:00:00
 7421	1	2	ANDRE MONTENEGRO DE HOLANDA	19063008368	3926599	010.976/2003-6	CE	AC 4608/2013-1ª CÂMARA	2013/08/07 00:00:00
 7422	1	2	ANDRÉ SIMÕES	55444210134	43064394	024.985/2008-8	MS	AC 5822/2012-1ª CÂMARA ; AC 7505/2012-1ª CÂMARA ; AC 5866/2013-1ª CÂMARA ; AC 7287/2013-1ª CÂMARA ; AC 1156/2016-PLENÁRIO	2013/11/05 00:00:00
+7468	1	2	ANTÔNIA CORDEIRO DOS SANTOS	26581400106	43899634	031.148/2008-0	TO	AC 4229/2010-1ª CÂMARA ; AC 7892/2010-1ª CÂMARA	2010/08/17 00:00:00
 7423	1	2	ANDRÉ SIMÕES	55444210134	43064401	024.987/2008-2	MS	AC 4643/2012-1ª CÂMARA ; AC 7030/2012-1ª CÂMARA ; AC 888/2014-1ª CÂMARA ; AC 1654/2014-1ª CÂMARA	2014/05/27 00:00:00
 7424	1	2	ANDRÉ SIMÕES	55444210134	43064789	025.031/2008-2	MS	AC 155/2013-PLENÁRIO ; AC 871/2013-PLENÁRIO ; AC 2509/2014-PLENÁRIO	2014/10/21 00:00:00
 7425	1	2	ANDREA AGUIAR	09447461875	44488019	029.822/2009-3	SP	AC 3915/2012-2ª CÂMARA	2012/08/31 00:00:00
@@ -6776,7 +6795,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 7465	1	2	ANTONIA ANTUNES DE SOUSA	48490261334	42841824	028.556/2007-4	CE	AC 11207/2011-2ª CÂMARA	2012/01/26 00:00:00
 7466	1	2	ANTONIA BEZERRA LIMA CARLOS	11413743315	44093458	011.237/2009-3	CE	AC 4476/2011-2ª CÂMARA ; AC 9685/2011-2ª CÂMARA ; AC 1445/2013-2ª CÂMARA	2011/12/09 00:00:00
 7467	1	2	ANTÔNIA BEZERRA LIMA CARLOS	11413743315	47534564	035.075/2011-2	CE	AC 5545/2014-2ª CÂMARA	2014/11/12 00:00:00
-7468	1	2	ANTÔNIA CORDEIRO DOS SANTOS	26581400106	43899634	031.148/2008-0	TO	AC 4229/2010-1ª CÂMARA ; AC 7892/2010-1ª CÂMARA	2010/08/17 00:00:00
 7469	1	2	ANTÔNIA CORDEIRO DOS SANTOS	26581400106	48479979	013.839/2012-8	TO	AC 7299/2013-2ª CÂMARA	2014/01/31 00:00:00
 7470	1	2	ANTÔNIA GEZILDA GALDINO DA SILVA	36271640753	45730717	009.233/2011-3	RJ	AC 3651/2013-PLENÁRIO	2014/04/03 00:00:00
 7471	1	2	ANTÔNIA JÂNIA DO NASCIMENTO VIANA	81418710482	4251211	018.910/2004-9	RN	AC 2544/2008-1ª CÂMARA	2008/11/06 00:00:00
@@ -7215,6 +7233,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 7904	1	2	ARIOVALDO DA SILVA PEREIRA	05564548809	42894416	003.620/2008-5	SP	AC 1925/2009-1ª CÂMARA	2009/06/03 00:00:00
 7905	1	2	ARIOVALDO VIEIRA BOA SORTE	11003332587	45329061	033.536/2010-4	BA	AC 3429/2014-1ª CÂMARA	2015/04/15 00:00:00
 7906	1	2	ARISMAR DOS REIS DE JESUS	49305492304	42663804	005.038/2007-8	MA	AC 1575/2011-2ª CÂMARA	2014/08/23 00:00:00
+8126	1	2	BERNARDINO CARMO DE SOUZA	31375626515	42878856	005.562/2008-9	BA	AC 3243/2009-1ª CÂMARA	2009/07/15 00:00:00
 7907	1	2	ARISTIDES LUIZ HARDMAN	12810592420	4345260	011.370/2005-0	PB	AC 513/2007-1ª CÂMARA ; AC 1513/2008-1ª CÂMARA ; AC 1093/2010-1ª CÂMARA ; AC 5021/2010-1ª CÂMARA ; AC 3065/2012-1ª CÂMARA	2012/08/15 00:00:00
 7908	1	2	ARISTÓTELES MOTA CURVINA	17772486391	42495729	010.394/2006-6	MA	AC 3270/2008-2ª CÂMARA	2008/11/13 00:00:00
 7909	1	2	ARISTÓTELES MOTA CURVINA	17772486391	42697684	010.444/2007-8	MA	AC 198/2009-2ª CÂMARA	2009/03/26 00:00:00
@@ -7391,6 +7410,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8077	1	2	BENECI BATISTA RIBEIRO	37640780144	43025661	020.584/2008-0	GO	AC 607/2010-2ª CÂMARA ; AC 5866/2010-2ª CÂMARA	2010/11/16 00:00:00
 8078	1	2	BENEDITA CECILIA PALHETA PEREIRA	04695372215	42876349	000.497/2008-6	PA	AC 3355/2009-1ª CÂMARA	2009/08/11 00:00:00
 8079	1	2	BENEDITA CECILIA PALHETA PEREIRA	04695372215	47650979	037.165/2011-9	PA	AC 1831/2013-1ª CÂMARA	2013/07/23 00:00:00
+8125	1	2	BERNARDINO CARMO DE SOUZA	31375626515	42669775	013.978/2007-7	BA	AC 4683/2008-1ª CÂMARA ; AC 0473/2009-1ª CÂMARA	2008/12/20 00:00:00
 8080	1	2	BENEDITA CECÍLIA PALHETA PEREIRA	04695372215	4191417	010.893/2004-0	PA	AC 3016/2007-2ª CÂMARA ; AC 1902/2008-2ª CÂMARA ; AC 2575/2009-2ª CÂMARA ; AC 3952/2009-2ª CÂMARA	2009/12/12 00:00:00
 8081	1	2	BENEDITA CECÍLIA PALHETA PEREIRA	04695372215	3713090	010.881/2002-2	PA	AC 10083/2011-1ª CÂMARA	2012/01/17 00:00:00
 8082	1	2	BENEDITA MARGARIDA DO NASCIMENTO	02050948808	4348102	008.775/2005-7	SP	AC 403/2008-2ª CÂMARA ; AC 5305/2008-2ª CÂMARA	2009/11/14 00:00:00
@@ -7435,8 +7455,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8122	1	2	BERNADETE BASÍLIO DA SILVA	08549338249	3771304	016.008/2002-6	RO	AC 989/2007-2ª CÂMARA	2008/11/01 00:00:00
 8123	1	2	BERNADINO PEREIRA	05649994668	3657433	006.122/2002-7	MG	AC 480/2005-1ª CÂMARA ; AC 1397/2007-1ª CÂMARA ; AC 1081/2008-1ª CÂMARA ; AC 4781/2008-1ª CÂMARA ; AC 838/2009-1ª CÂMARA	2009/05/22 00:00:00
 8124	1	2	BERNARDINHO CROZETTA	41530110106	50962139	001.318/2014-4	MS	AC 3621/2015-2ª CÂMARA	2015/08/22 00:00:00
-8125	1	2	BERNARDINO CARMO DE SOUZA	31375626515	42669775	013.978/2007-7	BA	AC 4683/2008-1ª CÂMARA ; AC 0473/2009-1ª CÂMARA	2008/12/20 00:00:00
-8126	1	2	BERNARDINO CARMO DE SOUZA	31375626515	42878856	005.562/2008-9	BA	AC 3243/2009-1ª CÂMARA	2009/07/15 00:00:00
 8127	1	2	BERNARDINO CARMO DE SOUZA	31375626515	42855462	018.514/2008-9	BA	AC 5864/2009-1ª CÂMARA	2010/08/21 00:00:00
 8128	1	2	BERNARDINO CARMO DE SOUZA	31375626515	42862726	018.153/2008-5	BA	AC 1918/2011-2ª CÂMARA	2011/04/29 00:00:00
 8129	1	2	BERNARDO CÉSAR CARLOS BELARMINO DE AMORIM	59623772491	4375297	011.905/2005-5	RN	AC 3561/2006-1ª CÂMARA ; AC 1642/2009-1ª CÂMARA	2009/06/09 00:00:00
@@ -7525,6 +7543,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8213	1	2	CARLOS ALBERTO ANTUNES AMARAL	24393908600	3366068	006.360/1999-8	RO	AC 0598/2009-PLENÁRIO ; AC 2184/2009-PLENÁRIO	2009/05/13 00:00:00
 8214	1	2	CARLOS ALBERTO ARAÚJO DA ROCHA	47459506249	50073903	013.521/2013-6	AM	AC 6262/2014-2ª CÂMARA	2014/12/24 00:00:00
 8215	1	2	CARLOS ALBERTO ARAÚJO DA ROCHA	47459506249	49759296	005.413/2013-3	AM	AC 817/2015-2ª CÂMARA	2015/04/14 00:00:00
+8344	1	2	CARLOS LORENZINI	32176929772	3440360	009.221/2000-2	DF	AC 8193/2011-2ª CÂMARA	2011/12/29 00:00:00
 8216	1	2	CARLOS ALBERTO AZEVEDO CAMURÇA	04270126272	42903820	004.963/2008-3	RO	AC 1053/2009-PLENÁRIO ; AC 1175/2010-PLENÁRIO ; AC 3130/2010-PLENÁRIO	2011/01/11 00:00:00
 8217	1	2	CARLOS ALBERTO BARROS	06534333600	50907130	034.284/2013-3	MG	AC 6240/2014-2ª CÂMARA	2014/12/13 00:00:00
 8218	1	2	CARLOS ALBERTO BARROS SILVA.	01211013200	3347615	005.796/1999-7	AM	AC 2646/2009-PLENÁRIO	2009/12/22 00:00:00
@@ -7653,7 +7672,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8341	1	2	CARLOS LEONARDO PEREIRA DA SILVA	12117382053	44607116	006.583/2010-5	RO	AC 4526/2014-2ª CÂMARA ; AC 8657/2015-2ª CÂMARA	2015/12/04 00:00:00
 8342	1	2	CARLOS LORENZINI	32176929772	3408216	001.549/2000-3	MS	AC 1185/2009-PLENÁRIO ; AC 2242/2010-PLENÁRIO	2010/10/26 00:00:00
 8343	1	2	CARLOS LORENZINI	32176929772	3362521	006.913/1999-7	DF	AC 8362/2010-1ª CÂMARA	2011/03/10 00:00:00
-8344	1	2	CARLOS LORENZINI	32176929772	3440360	009.221/2000-2	DF	AC 8193/2011-2ª CÂMARA	2011/12/29 00:00:00
 8345	1	2	CARLOS LUIZ DE SOUZA	12649970197	926635	725.100/1997-4	TO	AC 2874/2010-PLENÁRIO	2010/11/16 00:00:00
 8346	1	2	CARLOS MAGNO DUQUE BACELAR	00058343334	48328663	011.738/2012-0	MA	AC 4462/2015-1ª CÂMARA	2015/12/10 00:00:00
 8347	1	2	CARLOS MAGNO DUQUE BACELAR	00058343334	50367183	020.914/2013-0	MA	AC 4676/2015-2ª CÂMARA	2015/12/10 00:00:00
@@ -7699,6 +7717,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8387	1	2	CARLOS WALFREDO REIS	73733660820	3489882	000.819/2001-4	TO	AC 960/2005-2ª CÂMARA ; AC 1023/2006-2ª CÂMARA ; AC 3146/2011-PLENÁRIO	2015/05/14 00:00:00
 8388	1	2	CARLSON PAULA CABRAL	25922424300	44799990	015.926/2010-9	CE	AC 7305/2011-2ª CÂMARA ; AC 3164/2012-2ª CÂMARA	2012/06/20 00:00:00
 8389	1	2	CARLÚCIA DE VASCONCELOS TEIXEIRA	12408190487	42885405	002.230/2008-5	PE	AC 4854/2010-2ª CÂMARA ; AC 9376/2012-2ª CÂMARA	2013/02/19 00:00:00
+10608	1	2	GILMAR DE QUEIROS	99461706804	50618360	028.001/2013-3	PE	AC 4533/2014-2ª CÂMARA	2014/10/16 00:00:00
 8390	1	2	CARLÚCIA DE VASCONCELOS TEIXEIRA	12408190487	44579649	005.157/2010-2	PE	AC 5930/2011-1ª CÂMARA ; AC 9029/2011-1ª CÂMARA ; AC 4441/2012-1ª CÂMARA ; AC 7489/2012-1ª CÂMARA	2013/12/07 00:00:00
 8391	1	2	CARMEM DE ALMEIDA DA SILVA	64411770806	42546185	016.474/2006-6	DF	AC 656/2010-PLENÁRIO	2010/05/14 00:00:00
 8392	1	2	CARMEM SACRAMENTO DE SOUZA	18850537204	45054545	025.798/2010-3	AP	AC 4487/2013-2ª CÂMARA	2013/08/31 00:00:00
@@ -7742,6 +7761,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8430	1	2	CELIA CLEIDE PEREIRA DA SILVA	05171004790	3469370	013.153/2000-7	DF	AC 2580/2008-PLENÁRIO ; AC 0898/2009-PLENÁRIO ; AC 1284/2009-PLENÁRIO ; AC 1609/2011-PLENÁRIO	2011/06/07 00:00:00
 8431	1	2	CÉLIA CRISTINA VICENTE	58313400900	3965800	013.818/2003-0	PR	AC 1490/2009-2ª CÂMARA	2009/04/25 00:00:00
 8432	1	2	CELIA DA MATA LIMA	16611560530	49809478	006.947/2013-1	BA	AC 7056/2013-1ª CÂMARA ; AC 2517/2014-1ª CÂMARA	2014/07/05 00:00:00
+8476	1	2	CESAR CASTELLO BRANCO ORLANDO	24265225772	3446797	008.562/2000-7	RJ	AC 0583/2009-PLENÁRIO ; AC 2618/2009-PLENÁRIO	2009/06/03 00:00:00
 8433	1	2	CÉLIA FERNANDES	43272738991	50903401	034.175/2013-0	SC	AC 3746/2015-1ª CÂMARA ; AC 1641/2016-1ª CÂMARA ; AC 2474/2016-1ª CÂMARA	2016/05/26 00:00:00
 8434	1	2	CÉLIA FERRARI BUENO	38691221291	42555494	018.416/2006-1	RO	AC 1424/2007-PLENÁRIO ; AC 1498/2009-PLENÁRIO	2009/08/19 00:00:00
 8435	1	2	CELIA MARIA NUNES CABRAL DE SANTANA	48856886472	42720709	013.807/2007-0	PB	AC 1322/2011-2ª CÂMARA	2011/07/16 00:00:00
@@ -7785,8 +7805,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 8473	1	2	CELSON CARLOS BATISTA DE OLIVEIRA	03781895734	44444685	028.200/2009-9	DF	AC 11159/2011-2ª CÂMARA ; AC 371/2014-2ª CÂMARA ; AC 828/2015-2ª CÂMARA	2012/12/08 00:00:00
 8474	1	2	CELSON CÉSAR DO NASCIMENTO MENDES	87456729387	50805620	032.363/2013-3	MA	AC 5945/2014-2ª CÂMARA ; AC 6859/2016-2ª CÂMARA	2015/01/14 00:00:00
 8475	1	2	CÉSAR AUGUSTO MENDES RESENDE LARA	28503511134	3658745	006.322/2002-8	DF	AC 2510/2009-PLENÁRIO ; AC 116/2010-PLENÁRIO ; AC 2090/2011-PLENÁRIO ; AC 934/2012-PLENÁRIO ; AC 0201/2014-PLENÁRIO ; AC 1183/2014-PLENÁRIO	2015/03/12 00:00:00
-10608	1	2	GILMAR DE QUEIROS	99461706804	50618360	028.001/2013-3	PE	AC 4533/2014-2ª CÂMARA	2014/10/16 00:00:00
-8476	1	2	CESAR CASTELLO BRANCO ORLANDO	24265225772	3446797	008.562/2000-7	RJ	AC 0583/2009-PLENÁRIO ; AC 2618/2009-PLENÁRIO	2009/06/03 00:00:00
 8477	1	2	CESAR LUIZ VICENTE	37225553704	50904637	034.221/2013-1	RJ	AC 2534/2014-PLENÁRIO	2014/11/06 00:00:00
 8478	1	2	CESAR LUIZ VICENTE	37225553704	49931888	009.864/2013-0	RJ	AC 3105/2014-PLENÁRIO	2014/12/30 00:00:00
 8479	1	2	CÉSAR MARÇAL	07184557972	3822636	001.597/2003-5	PR	AC 1746-2ª CÂMARA	2011/04/29 00:00:00
@@ -8407,6 +8425,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 9092	1	2	ÉDEN CELESTINO VIEIRA	66848202649	51959919	025.576/2014-3	MG	AC 1449/2016-2ª CÂMARA	2016/03/24 00:00:00
 9093	1	2	EDEN JANUARIO NETTO	33546444949	43005467	018.194/2008-8	PR	AC 2396/2010-2ª CÂMARA ; AC 2441/2011-2ª CÂMARA	2011/12/07 00:00:00
 9094	1	2	EDENILDA LOPES DE OLIVEIRA SOUSA	24436828387	52505070	002.456/2015-0	CE	AC 2767/2016-2ª CÂMARA	2016/05/11 00:00:00
+9139	1	2	EDINEU OLIVEIRA DOS SANTOS	06281850572	4307227	005.307/2005-1	BA	AC 1076/2010-2ª CÂMARA	2010/05/11 00:00:00
 9095	1	2	EDENYR DANTAS DA SILVA	78640296715	3926559	011.368/2003-6	ES	AC 2855/2010-PLENÁRIO ; AC 2427/2011-PLENÁRIO	2011/12/01 00:00:00
 9096	1	2	ÉDER LUIZ LOURENÇO DA ROCHA	04490477848	4370108	011.216/2005-0	TO	AC 2864/2008-2ª CÂMARA ; AC 4034/2008-2ª CÂMARA ; AC 0377/2009-2ª CÂMARA ; AC 2135/2009-2ª CÂMARA	2009/06/16 00:00:00
 9097	1	2	EDERLINDO JOSÉ DOS SANTOS LIMA	01638645515	50315853	019.507/2013-5	BA	AC 2286/2014-1ª CÂMARA	2014/10/17 00:00:00
@@ -8452,7 +8471,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 9136	1	2	EDINALDO PRADO NASCIMENTO	82736057368	49803803	006.754/2013-9	MA	AC 1412/2014-2ª CÂMARA	2015/01/03 00:00:00
 9137	1	2	EDINEU OLIVEIRA DOS SANTOS	06281850572	42471586	007.338/2006-5	BA	AC 3299/2009-2ª CÂMARA	2009/07/22 00:00:00
 9138	1	2	EDINEU OLIVEIRA DOS SANTOS	06281850572	4307215	004.338/2005-3	BA	AC 917/2008-2ª CÂMARA ; AC 148/2010-2ª CÂMARA	2010/04/23 00:00:00
-9139	1	2	EDINEU OLIVEIRA DOS SANTOS	06281850572	4307227	005.307/2005-1	BA	AC 1076/2010-2ª CÂMARA	2010/05/11 00:00:00
 9140	1	2	EDIR CARVALHO TENÓRIO	00220426449	42921531	006.906/2008-6	MG	AC 6537/2009-2ª CÂMARA ; AC 1911/2010-2ª CÂMARA	2010/01/22 00:00:00
 9141	1	2	EDIR PEDRO DOMENEGHINI	20526938072	42637063	029.604/2006-0	RS	AC 2224/2009-2ª CÂMARA ; AC 4214/2011-2ª CÂMARA ; AC 11466/2011-2ª CÂMARA ; AC 1408/2012-2ª CÂMARA ; AC 6270/2012-2ª CÂMARA	2012/01/05 00:00:00
 9142	1	2	EDIR RAIMUNDO MOREIRA	27912752668	44307368	022.128/2009-7	MG	AC 5522/2010-2ª CÂMARA	2010/10/28 00:00:00
@@ -9639,6 +9657,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 10323	1	2	FRANCISCO SANFORD FROTA	00336050330	4168234	008.333/2004-7	CE	AC 1690/2007-2ª CÂMARA ; AC 4177/2008-2ª CÂMARA ; AC 2658/2010-2ª CÂMARA	2010/09/28 00:00:00
 10324	1	2	FRANCISCO SENA LEAL	17529620363	42656090	003.216/2007-2	MA	AC 1138/2011-2ª CÂMARA	2011/09/14 00:00:00
 10325	1	2	FRANCISCO SERAFIM DE BARROS	02240181168	42532880	015.335/2006-8	MS	AC 1022/2013-PLENÁRIO ; AC 2380/2013-PLENÁRIO ; AC 1984/2014-PLENÁRIO	2014/09/09 00:00:00
+10501	1	2	GERSON DE OLIVEIRA	93601611872	44603444	006.330/2010-0	SP	AC 2370/2010-PLENÁRIO	2010/11/05 00:00:00
 10326	1	2	FRANCISCO SERAFIM DE BARROS	02240181168	42523837	014.969/2006-4	MS	AC 2928/2011-1ª CÂMARA ; AC 1060/2012-1ª CÂMARA ; AC 6018/2014-1ª CÂMARA	2014/11/03 00:00:00
 10327	1	2	FRANCISCO SEVERO DA SILVA	07477872200	44338575	023.529/2009-0	RR	AC 1606/2011-1ª CÂMARA	2011/04/21 00:00:00
 10328	1	2	FRANCISCO SEVERO DA SILVA	07477872200	44390480	025.862/2009-0	RR	AC 721/2012-2ª CÂMARA	2012/03/30 00:00:00
@@ -9814,7 +9833,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 10498	1	2	GERSON DE OLIVEIRA	93601611872	42853067	029.651/2007-8	SP	AC 2026/2008-PLENÁRIO	2009/03/31 00:00:00
 10499	1	2	GERSON DE OLIVEIRA	93601611872	42452661	005.965/2006-6	SP	AC 1662/2008-PLENÁRIO	2009/06/09 00:00:00
 10500	1	2	GERSON DE OLIVEIRA	93601611872	43007510	018.450/2008-0	SP	AC 2840/2008-PLENÁRIO	2009/06/13 00:00:00
-10501	1	2	GERSON DE OLIVEIRA	93601611872	44603444	006.330/2010-0	SP	AC 2370/2010-PLENÁRIO	2010/11/05 00:00:00
 10502	1	2	GERSON DE OLIVEIRA	93601611872	44606513	006.494/2010-2	SP	AC 2839/2010-PLENÁRIO ; AC 76/2011-PLENÁRIO	2011/06/22 00:00:00
 10503	1	2	GERSON DE OLIVEIRA	93601611872	48030523	006.571/2012-3	SP	AC 2746/2012-PLENÁRIO	2012/11/08 00:00:00
 10504	1	2	GERSON DE OLIVEIRA	93601611872	48965298	027.875/2012-1	SP	AC 2809/2013-PLENÁRIO	2013/11/12 00:00:00
@@ -9858,6 +9876,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 10542	1	2	GILBERTO BARATA CARDOSO	13424351253	49690893	003.417/2013-1	PA	AC 1264/2015-2ª CÂMARA	2015/06/06 00:00:00
 10543	1	2	GILBERTO CAGLIARI	15154556887	4028259	019.519/2003-9	SP	AC 6287/2010-1ª CÂMARA ; AC 1904/2011-1ª CÂMARA ; AC 5722/2011-1ª CÂMARA ; AC 5013/2012-1ª CÂMARA	2012/12/27 00:00:00
 10544	1	2	GILBERTO CAIXETA DA SILVA	25535498653	42649255	001.705/2007-7	MG	AC 4119/2009-2ª CÂMARA ; AC 7001/2010-2ª CÂMARA ; AC 1747/2011-2ª CÂMARA	2011/04/19 00:00:00
+10589	1	2	GILDÁSIO CHAVES RIBEIRO	30612993272	44213684	017.612/2009-3	MA	AC 4666/2012-1ª CÂMARA ; AC 8633/2013-1ª CÂMARA	2014/01/21 00:00:00
 10545	1	2	GILBERTO CAIXETA SILVA	25535498653	42649136	001.670/2007-0	MG	AC 1519/2008-1ª CÂMARA ; AC 2059/2008-1ª CÂMARA ; AC 1540/2009-1ª CÂMARA	2009/05/15 00:00:00
 10546	1	2	GILBERTO CASTRO OSSAMI	01129295249	42531783	016.161/2006-1	AC	AC 2429/2008-1ª CÂMARA ; AC 3530/2010-1ª CÂMARA	2010/07/29 00:00:00
 10547	1	2	GILBERTO CASTRO OSSAMI	01129295249	3704769	009.915/2002-0	AC	AC 6021/2009-1ª CÂMARA	2010/09/21 00:00:00
@@ -9902,7 +9921,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 10586	1	2	GILDÁSIO ANTÔNIO DOS SANTOS	03810542504	3456636	010.708/2000-0	BA	AC 3282/2006-2ª CÂMARA ; AC 349/2010-2ª CÂMARA	2011/12/20 00:00:00
 10587	1	2	GILDÁSIO ANTÔNIO DOS SANTOS	03810542504	44009658	006.325/2009-7	BA	AC 7536/2013-1ª CÂMARA ; AC 3123/2015-1ª CÂMARA ; AC 6956/2015-1ª CÂMARA	2015/12/16 00:00:00
 10588	1	2	GILDASIO CHAVES RIBEIRO	30612993272	4455362	020.311/2005-9	MA	AC 4977/2008-2ª CÂMARA ; AC 3486/2009-2ª CÂMARA	2009/08/13 00:00:00
-10589	1	2	GILDÁSIO CHAVES RIBEIRO	30612993272	44213684	017.612/2009-3	MA	AC 4666/2012-1ª CÂMARA ; AC 8633/2013-1ª CÂMARA	2014/01/21 00:00:00
 10590	1	2	GILDÁSIO PENEDO CAVALCANTI DE ALBUQUERQUE	04710037515	3728716	013.449/2002-7	BA	AC 10412/2011-1ª CÂMARA ; AC 3215/2013-1ª CÂMARA	2012/02/04 00:00:00
 10591	1	2	GILDENOR GOMES DE SOUSA	24302538368	4401981	027.188/2006-3	TO	AC 2023/2010-2ª CÂMARA	2010/06/16 00:00:00
 10592	1	2	GILDEON FERREIRA DA SILVA	25305301572	42783265	021.766/2007-0	SE	AC 1334/2010-1ª CÂMARA	2010/05/21 00:00:00
@@ -10435,6 +10453,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11122	1	2	IVANILDO FERREIRA ALVES	18638503253	4393441	012.560/2005-0	PA	AC 6738/2010-1ª CÂMARA	2010/12/04 00:00:00
 11123	1	2	IVANILDO FERREIRA DO NASCIMENTO	51334372853	4209243	013.212/2004-2	SP	AC 5535/2010-1ª CÂMARA	2010/10/07 00:00:00
 11124	1	2	IVO CESAR MARTORANO	30597137900	44530488	002.504/2010-3	SC	AC 8415/2011-1ª CÂMARA ; AC 2758/2012-1ª CÂMARA	2012/06/28 00:00:00
+11172	1	2	JACQUES JOSEPH ANTOINE ISTRIA	50904779220	42919797	006.626/2008-2	AM	AC 0434/2012-1ª CÂMARA ; AC 5933/2012-1ª CÂMARA	2013/07/23 00:00:00
 11125	1	2	IVO DE BARROS SILVA	05390141415	3366431	006.457/1999-1	PE	AC 259/2012-PLENÁRIO ; AC 1732/2014-PLENÁRIO ; AC 3063/2014-PLENÁRIO	2014/10/10 00:00:00
 11126	1	2	IVO RICARDO BARFKNECHT	40046184953	50264245	018.332/2013-7	DF	AC 7482/2014-1ª CÂMARA	2014/12/31 00:00:00
 11127	1	2	IVO RICARDO BARFKNECHT	40046184953	51226358	008.924/2014-7	DF	AC 1614/2015-1ª CÂMARA	2015/11/13 00:00:00
@@ -10482,7 +10501,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11169	1	2	JACQUELINE GURGEL MOTA	44582900372	42818862	026.240/2007-9	CE	AC 7026/2010-2ª CÂMARA	2011/01/11 00:00:00
 11170	1	2	JACQUELINE GURGEL MOTA	44582900372	44008491	006.235/2009-8	CE	AC 5481/2011-2ª CÂMARA	2011/09/10 00:00:00
 11171	1	2	JACQUELINE GURGEL MOTA	44582900372	49786473	006.315/2013-5	CE	AC 3617/2015-2ª CÂMARA	2015/08/13 00:00:00
-11172	1	2	JACQUES JOSEPH ANTOINE ISTRIA	50904779220	42919797	006.626/2008-2	AM	AC 0434/2012-1ª CÂMARA ; AC 5933/2012-1ª CÂMARA	2013/07/23 00:00:00
 11173	1	2	JACYDALVA DE ASSIS	22821856768	42842851	028.862/2007-8	DF	AC 0299/2009-1ª CÂMARA ; AC 6594/2009-1ª CÂMARA	2009/12/19 00:00:00
 11174	1	2	JADEILDO GOUVEIA DA SILVA	14693798487	44327618	023.032/2009-9	PE	AC 3080/2011-1ª CÂMARA ; AC 5945/2013-1ª CÂMARA ; AC 4303/2014-1ª CÂMARA	2014/09/11 00:00:00
 11175	1	2	JADER BARBOSA DE CRISTO	64281396853	50027904	012.549/2013-4	RJ	AC 2923/2014-PLENÁRIO	2016/03/30 00:00:00
@@ -10703,6 +10721,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11392	1	2	JOÃO ARAÚJO DA SILVA FILHO	12867675391	4278595	020.628/2004-4	MA	AC 2770/2009-PLENÁRIO ; AC 3271/2011-PLENÁRIO	2010/05/27 00:00:00
 11393	1	2	JOÃO ARAÚJO DA SILVA FILHO	12867675391	4278607	020.631/2004-0	MA	AC 373/2010-PLENÁRIO	2010/06/30 00:00:00
 11394	1	2	JOÃO ARAÚJO DA SILVA FILHO	12867675391	4277990	020.532/2004-1	MA	AC 372/2010-PLENÁRIO	2010/07/15 00:00:00
+11658	1	2	JOÃO SANTOS DA SILVA	14512238387	52051447	028.016/2014-9	PI	AC 3455/2015-2ª CÂMARA	2015/08/06 00:00:00
 11395	1	2	JOÃO ARAÚJO DA SILVA FILHO	12867675391	4278304	020.588/2004-7	MA	AC 2440/2010-PLENÁRIO ; AC 1423/2013-PLENÁRIO	2013/07/31 00:00:00
 11396	1	2	JOÃO ARAÚJO DA SILVA FILHO	12867675391	4278629	020.637/2004-3	MA	AC 2088/2010-PLENÁRIO ; AC 2487/2013-PLENÁRIO	2013/11/06 00:00:00
 11397	1	2	JOÃO ARAÚJO DA SILVA FILHO	12867675391	4278590	020.627/2004-7	MA	AC 2706/2010-PLENÁRIO ; AC 1683/2013\t-PLENÁRIO ; AC 291/2015-PLENÁRIO	2013/11/15 00:00:00
@@ -10831,6 +10850,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11518	1	2	JOÃO DOMINGOS BIAGI	83387587872	3593792	015.856/2001-4	SP	AC 1459/2010-PLENÁRIO	2010/07/29 00:00:00
 11519	1	2	JOÃO DOS REIS ALMEIDA SILVA	74305638800	43676041	027.107/2008-1	SP	AC 294/2010-1ª CÂMARA ; AC 7688/2010-1ª CÂMARA	2010/12/22 00:00:00
 11520	1	2	JOÃO DOS SANTOS PLENTZ	57764352268	48434851	013.142/2012-7	DF	AC 2450/2014-2ª CÂMARA	2015/01/29 00:00:00
+11704	1	2	JOAQUIM JOSÉ DE CARVALHO	03857484349	52574302	003.664/2015-5	PI	AC 10983/2015-2ª CÂMARA	2015/12/31 00:00:00
 11521	1	2	JOÃO EDUARDO VIEGAS MENDONÇA DE ARAÚJO	38153750534	50762804	031.559/2013-1	SE	AC 1396/2015-1ª CÂMARA	2015/04/23 00:00:00
 11522	1	2	JOÃO EDUARDO VIEGAS MENDONÇA DE ARAÚJO	38153750534	51291037	010.976/2014-0	SE	AC 3438/2015-1ª CÂMARA	2015/07/22 00:00:00
 11523	1	2	JOÃO EDUARDO VIEGAS MENDONÇA DE ARAÚJO	38153750534	52780970	008.086/2015-0	SE	AC 2162/2016-1ª CÂMARA	2016/05/13 00:00:00
@@ -10876,6 +10896,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11564	1	2	JOÃO GUSTAVO KIENEN	02484565984	43963744	003.853/2009-5	PR	AC 2167/2010-1ª CÂMARA	2010/06/15 00:00:00
 11565	1	2	JOÃO HENRIQUE RODRIGUES PIMENTEL	06696325204	45618359	006.741/2011-8	AP	AC 1814/2012-2ª CÂMARA ; AC 2979/2014-PLENÁRIO	2012/04/20 00:00:00
 11566	1	2	JOÃO HENRIQUE VIEIRA DA SILVA NETO	21152551000	42483037	011.326/2006-0	DF	AC 10057/2011-1ª CÂMARA	2012/02/18 00:00:00
+11705	1	2	JOAQUIM JOSÉ DO NASCIMENTO	04071294485	49827308	007.294/2013-1	PE	AC 3579/2014-PLENÁRIO	2015/10/07 00:00:00
 11567	1	2	JOÃO HILARIO COELHO CORREIA	05681685349	813134	275.077/1994-2	CE	AC 088/2002-2ª CÂMARA ; DC 310/2002-2ª CÂMARA ; AC 3976/2009-2ª CÂMARA ; AC 5603/2009-2ª CÂMARA	2009/12/08 00:00:00
 11568	1	2	JOÃO HOLANDA LEITE	84499796172	48238323	009.693/2012-2	TO	AC 4464/2012-2ª CÂMARA	2012/07/31 00:00:00
 11569	1	2	JOÃO JORGE DIAS CUNHA	17872596334	3501329	000.900/2001-8	MA	AC 2119/2009-1ª CÂMARA	2009/07/21 00:00:00
@@ -10920,6 +10941,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11607	1	2	JOÃO MARTINS CARDOSO FILHO	03823440225	46257848	017.675/2011-1	PA	AC 4337/2015-1ª CÂMARA	2015/11/13 00:00:00
 11608	1	2	JOÃO MARTINS CARDOSO FILHO	03823440225	51257688	010.195/2014-9	PA	AC 9580/2015-2ª CÂMARA	2016/03/09 00:00:00
 11609	1	2	JOÃO MARTINS DIAS	01206214287	44905047	020.019/2010-6	AM	AC 4207/2014-2ª CÂMARA ; AC 5217/2015-2ª CÂMARA ; AC 9583/2015-2ª CÂMARA	2015/12/05 00:00:00
+11706	1	2	JOAQUIM LUIZ YAWANAWA	39098680291	42664835	025.832/2008-3	AC	AC 4072/2010-1ª CÂMARA	2010/08/25 00:00:00
 11610	1	2	JOÃO MATEUS FILHO	04508629334	4415584	015.382/2005-0	CE	AC 2345/2006-PLENÁRIO ; AC 177/2008-PLENÁRIO ; AC 2068/2008-PLENÁRIO	2008/11/05 00:00:00
 11611	1	2	JOÃO MATEUS FILHO	04508629334	44321872	022.753/2009-2	CE	AC 701/2013-2ª CÂMARA	2013/07/27 00:00:00
 11612	1	2	JOÃO MENDONÇA BASTOS	12545600687	44019294	007.134/2009-0	MG	AC 5518/2010-2ª CÂMARA	2010/10/29 00:00:00
@@ -10966,7 +10988,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11655	1	2	JOÃO RODRIGUES NETO	11536950653	43067559	025.446/2008-7	MG	AC 7509/2010-2ª CÂMARA	2011/07/19 00:00:00
 11656	1	2	JOAO ROMEU DUTRA	00932205020	44292406	021.189/2009-8	RS	AC 848/2011-PLENÁRIO ; AC 2168/2012-PLENÁRIO ; AC 3026/2012-PLENÁRIO ; AC 0068/2014-PLENÁRIO	2014/02/21 00:00:00
 11657	1	2	JOÃO ROMEU DUTRA	00932205020	44367568	024.914/2009-4	RS	AC 851/2011-PLENÁRIO ; AC 2423/2011-PLENÁRIO	2011/11/04 00:00:00
-11658	1	2	JOÃO SANTOS DA SILVA	14512238387	52051447	028.016/2014-9	PI	AC 3455/2015-2ª CÂMARA	2015/08/06 00:00:00
 11659	1	2	JOÃO SCARPARO	12007803968	44332804	023.272/2009-5	PA	AC 2714/2012-2ª CÂMARA ; AC 4058/2013-2ª CÂMARA	2013/10/31 00:00:00
 11660	1	2	JOÃO SÉRGIO FERREIRA	13864084504	42544734	021.321/2006-8	SE	AC 6920/2009-1ª CÂMARA ; AC 3337/2011-1ª CÂMARA	2011/07/07 00:00:00
 11661	1	2	JOÃO SOARES	09601279768	3476825	015.249/2000-9	RJ	AC 3042/2008-1ª CÂMARA ; AC 100/2012-PLENÁRIO	2008/11/06 00:00:00
@@ -11012,9 +11033,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11701	1	2	JOAQUIM JOSÉ DE CARVALHO	03857484349	4136612	003.837/2004-0	PI	AC 1467/2009-PLENÁRIO	2009/08/08 00:00:00
 11702	1	2	JOAQUIM JOSÉ DE CARVALHO	03857484349	50915578	034.495/2013-4	PI	AC 6252/2014-2ª CÂMARA	2014/12/02 00:00:00
 11703	1	2	JOAQUIM JOSÉ DE CARVALHO	03857484349	51904112	024.628/2014-0	PI	AC 512/2015-2ª CÂMARA	2015/04/08 00:00:00
-11704	1	2	JOAQUIM JOSÉ DE CARVALHO	03857484349	52574302	003.664/2015-5	PI	AC 10983/2015-2ª CÂMARA	2015/12/31 00:00:00
-11705	1	2	JOAQUIM JOSÉ DO NASCIMENTO	04071294485	49827308	007.294/2013-1	PE	AC 3579/2014-PLENÁRIO	2015/10/07 00:00:00
-11706	1	2	JOAQUIM LUIZ YAWANAWA	39098680291	42664835	025.832/2008-3	AC	AC 4072/2010-1ª CÂMARA	2010/08/25 00:00:00
 11707	1	2	JOAQUIM MARIA RUELA SOBRINHO	16474201215	46305920	019.041/2011-0	AC	AC 471/2013-2ª CÂMARA ; AC 1113/2014-2ª CÂMARA	2013/05/04 00:00:00
 11708	1	2	JOAQUIM MATIAS LIMA VERDE	03292665353	4226268	015.147/2004-1	PI	AC 2114/2009-2ª CÂMARA	2009/06/02 00:00:00
 11709	1	2	JOAQUIM MATIAS VALADÃO	48230570159	44272203	020.400/2009-3	MT	AC 3348/2011-2ª CÂMARA	2011/06/25 00:00:00
@@ -11280,6 +11298,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 11969	1	2	JOSÉ ANTÔNIO DOS ANJOS NUNES	71166700259	44276433	020.511/2009-2	PA	AC 6693/2009-2ª CÂMARA ; AC 2614/2010-2ª CÂMARA	2010/07/15 00:00:00
 11970	1	2	JOSÉ ANTONIO DOS SANTOS	24324302634	42503981	023.153/2006-0	MG	AC 3713/2008-1ª CÂMARA	2008/12/12 00:00:00
 11971	1	2	JOSÉ ANTONIO DOS SANTOS CARVALHO	29263808287	48950099	027.183/2012-2	PA	AC 2509/2014-1ª CÂMARA	2014/07/12 00:00:00
+12014	1	2	JOSÉ BAKA FILHO	03370853825	48093843	007.482/2012-4	PR	AC 1556/2014-PLENÁRIO ; AC 230/2015-PLENÁRIO	2015/03/19 00:00:00
 11972	1	2	JOSÉ ANTÔNIO FAUSTO DA SILVA	14700352272	4471130	021.795/2005-5	PA	AC 73/2007-2ª CÂMARA ; AC 4970/2009-2ª CÂMARA ; AC 457/2010-2ª CÂMARA	2009/11/24 00:00:00
 11973	1	2	JOSÉ ANTÔNIO FRANZIN	45579342853	47645049	037.048/2011-2	SP	AC 7254/2012-2ª CÂMARA ; AC 4582/2013-2ª CÂMARA	2013/09/06 00:00:00
 11974	1	2	JOSÉ ANTÔNIO LIMA FERREIRA	46297596204	44027162	007.653/2009-2	PA	AC 4246/2012-2ª CÂMARA	2012/10/26 00:00:00
@@ -11323,7 +11342,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12011	1	2	JOSÉ AUGUSTO RODRIGUES OLIVEIRA	04482670391	3713492	011.148/2002-4	PI	AC 2606/2008-PLENÁRIO ; AC 1974/2014-PLENÁRIO ; AC 232/2015-PLENÁRIO	2009/01/01 00:00:00
 12012	1	2	JOSÉ AUGUSTO SOUSA VELOSO	17585910304	42501455	011.243/2006-6	MA	AC 1308/2011-2ª CÂMARA	2012/03/13 00:00:00
 12013	1	2	JOSÉ AVELAR FERNANDES DE OLIVEIRA	27503275391	42579004	022.466/2006-0	PI	AC 3712/2008-1ª CÂMARA ; AC 3363/2009-1ª CÂMARA	2009/07/31 00:00:00
-12014	1	2	JOSÉ BAKA FILHO	03370853825	48093843	007.482/2012-4	PR	AC 1556/2014-PLENÁRIO ; AC 230/2015-PLENÁRIO	2015/03/19 00:00:00
 12015	1	2	JOSÉ BAKA FILHO	03370853825	48095419	007.509/2012-0	PR	AC 1557/2014-PLENÁRIO ; AC 1655/2015-PLENÁRIO ; AC 140/2016-PLENÁRIO	2015/09/10 00:00:00
 12016	1	2	JOSE BARTOLOMEU DA SILVA RAMOS	03631133200	3366431	006.457/1999-1	PE	AC 259/2012-PLENÁRIO ; AC 1732/2014-PLENÁRIO ; AC 3063/2014-PLENÁRIO	2014/08/07 00:00:00
 12017	1	2	JOSÉ BATISTA DA SILVA MILANEZ	09166319072	42590129	023.992/2006-1	RS	AC 3039/2009-2ª CÂMARA	2009/08/14 00:00:00
@@ -11675,6 +11693,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12362	1	2	JOSÉ IDÍLIO CAVALCANTE	20146698304	44038300	008.306/2009-0	PI	AC 559/2011-2ª CÂMARA	2011/04/06 00:00:00
 12363	1	2	JOSÉ IDÍLIO CAVALCANTE	20146698304	44317805	022.467/2009-1	PI	AC 758/2011-2ª CÂMARA	2011/05/12 00:00:00
 12364	1	2	JOSÉ IGO DO NASCIMENTO	02971457460	42919706	006.620/2008-9	AL	AC 2937/2010-1ª CÂMARA	2010/07/28 00:00:00
+12457	1	2	JOSÉ LUIZ GONÇALVES	21100233920	4279328	020.748/2004-2	RO	AC 4061/2013-2ª CÂMARA	2013/08/31 00:00:00
 12365	1	2	JOSÉ ILMAR CRUZ FREIRE JÚNIOR	32636822534	44048866	008.993/2009-9	SE	AC 765/2012-1ª CÂMARA ; AC 5429/2012-1ª CÂMARA	2012/05/09 00:00:00
 12366	1	2	JOSÉ INÁCIO DA SILVA	00077607449	43932047	033.253/2008-5	PE	AC 3167/2010-1ª CÂMARA	2010/07/16 00:00:00
 12367	1	2	JOSÉ INÁCIO DA SILVA	00077607449	42576388	022.168/2006-8	PE	AC 4859/2010-1ª CÂMARA	2010/09/14 00:00:00
@@ -11766,7 +11785,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12454	1	2	JOSÉ LUIZ DOS SANTOS	37605313772	50031173	012.598/2013-5	RJ	AC 2924/2014-PLENÁRIO ; AC 2437/2015-PLENÁRIO	2015/11/05 00:00:00
 12455	1	2	JOSÉ LUIZ FERNANDES	09477446815	48804765	020.945/2012-4	SP	AC 1116/2014-2ª CÂMARA	2014/10/08 00:00:00
 12456	1	2	JOSÉ LUIZ FERREIRA	05173112832	42588087	023.623/2006-8	SP	AC 3132/2010-1ª CÂMARA ; AC 6279/2010-1ª CÂMARA ; AC 4049/2012-1ª CÂMARA	2012/10/24 00:00:00
-12457	1	2	JOSÉ LUIZ GONÇALVES	21100233920	4279328	020.748/2004-2	RO	AC 4061/2013-2ª CÂMARA	2013/08/31 00:00:00
 12458	1	2	JOSÉ LUIZ PAGANI DA SILVA	30940370620	43937368	000.167/2009-9	MG	AC 999/2011-PLENÁRIO	2014/10/15 00:00:00
 12459	1	2	JOSÉ LUIZ PIMENTEL BALESTRERO	45116695700	4054886	019.981/2003-7	ES	AC 4540/2008-1ª CÂMARA ; AC 2123/2009-1ª CÂMARA	2009/06/06 00:00:00
 12460	1	2	JOSÉ LUIZ PRUDENTE D¿ OLIVEIRA	19112289191	42500280	012.755/2006-9	GO	AC 4385/2009-2ª CÂMARA ; AC 2861/2011-2ª CÂMARA ; AC 5220/2011-1ª CÂMARA	2011/08/03 00:00:00
@@ -11811,6 +11829,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12498	1	2	JOSÉ MARIA OLIVEIRA LINHARES	04743482372	3918984	010.637/2003-1	PI	AC 3163/2010-PLENÁRIO ; AC 1977/2014-PLENÁRIO	2014/08/20 00:00:00
 12499	1	2	JOSÉ MARIA ROSA MONTEIRO	15677591220	44229202	018.613/2009-5	AP	AC 2788/2010-2ª CÂMARA ; AC 3951/2010-2ª CÂMARA	2010/12/03 00:00:00
 12500	1	2	JOSÉ MARIANO NOBRE NETO	30286638304	50393390	021.399/2013-1	CE	AC 65/2015-2ª CÂMARA	2015/03/31 00:00:00
+12547	1	2	JOSÉ NIVALTER CORREIA LIMA	02693380200	44473573	029.430/2009-3	AM	AC 8226/2011-2ª CÂMARA ; AC 671/2013-2ª CÂMARA	2013/03/27 00:00:00
 12501	1	2	JOSÉ MARINALDO DE LIMA GOMES	26290480472	44350052	023.932/2009-8	PB	AC 3748/2011-1ª CÂMARA ; AC 8413/2011-1ª CÂMARA ; AC 760/2012-1ª CÂMARA ; AC 4563/2012-1ª CÂMARA	2012/04/10 00:00:00
 12502	1	2	JOSÉ MARINALDO DE LIMA GOMES	26290480472	44930543	021.182/2010-8	PB	AC 3848/2012-1ª CÂMARA	2012/08/10 00:00:00
 12503	1	2	JOSÉ MÁRIO DE MELO	64328457772	43879907	029.579/2008-1	RO	AC 2309/2011-2ª CÂMARA ; AC 6808/2013-2ª CÂMARA	2014/03/21 00:00:00
@@ -11855,7 +11874,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12544	1	2	JOSÉ NIVALDO DE CARVALHO	59815183834	48197308	009.238/2012-3	SE	AC 5774/2015-1ª CÂMARA	2016/01/21 00:00:00
 12545	1	2	JOSÉ NIVALTER CORREA LIMA	02693380200	48607149	016.794/2012-5	AM	AC 7435/2013-1ª CÂMARA	2014/01/21 00:00:00
 12546	1	2	JOSÉ NIVALTER CORREIA LIMA	02693380200	42777961	021.261/2007-6	AM	AC 2098/2009-2ª CÂMARA ; AC 3128/2013-PLENÁRIO	2009/06/04 00:00:00
-12547	1	2	JOSÉ NIVALTER CORREIA LIMA	02693380200	44473573	029.430/2009-3	AM	AC 8226/2011-2ª CÂMARA ; AC 671/2013-2ª CÂMARA	2013/03/27 00:00:00
 12548	1	2	JOSÉ NIVALTER CORREIA LIMA	02693380200	46163453	015.746/2011-9	AM	AC 8502/2013-1ª CÂMARA ; AC 5347/2014-1ª CÂMARA	2014/12/17 00:00:00
 12549	1	2	JOSÉ NOGUEIRA TAPETY NETO	22800859334	43051284	023.373/2008-0	PI	AC 3131/2010-1ª CÂMARA ; AC 5839/2010-1ª CÂMARA ; AC 4690/2014-1ª CÂMARA ; AC 1513/2015-1ª CÂMARA	2015/04/21 00:00:00
 12550	1	2	JOSÉ ODAIR DA FONSECA BENJAMIN	00082180210	42825362	028.852/2007-1	AP	AC 1065/2012-1ª CÂMARA	2012/06/01 00:00:00
@@ -11985,6 +12003,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12674	1	2	JOSÉ ROBERTO DE SOUZA	11102624420	4118260	002.138/2004-5	AL	AC 400/2009-1ª CÂMARA ; AC 2150/2010-1ª CÂMARA ; AC 5460/2010-1ª CÂMARA	2010/06/02 00:00:00
 12675	1	2	JOSÉ ROBERTO DO NASCIMENTO	76329755434	42731831	015.522/2007-9	PE	AC 2966/2011-1ª CÂMARA ; AC 5920/2013-1ª CÂMARA	2013/11/05 00:00:00
 12676	1	2	JOSÉ ROBERTO DOS SANTOS	31212581504	3658087	005.725/2002-7	SE	AC 635/2006-PLENÁRIO ; AC 467/2010-PLENÁRIO	2010/04/21 00:00:00
+12762	1	2	JOSÉ VIANA SABINO	01476491100	3725640	013.280/2002-6	MT	AC 1595/2011-1ª CÂMARA	2011/07/09 00:00:00
 12677	1	2	JOSÉ ROBERTO ESCÓRCIO	00502975890	45795010	010.927/2011-5	SP	AC 1427/2013-2ª CÂMARA ; AC 7477/2015-2ª CÂMARA ; AC 10962/2015-2ª CÂMARA	2016/02/05 00:00:00
 12678	1	2	JOSÉ ROBERTO ESCÓRCIO	00502975890	44064377	009.774/2009-7	SP	AC 2065/2014-PLENÁRIO ; AC 2360/2015-PLENÁRIO ; AC 3307/2015-PLENÁRIO	2016/06/04 00:00:00
 12679	1	2	JOSE ROBSON RAMOS DE AMORIM	33999996404	45452137	002.629/2011-9	PE	AC 187/2012-1ª CÂMARA ; AC 2858/2012-1ª CÂMARA ; AC 855/2015-PLENÁRIO	2012/02/24 00:00:00
@@ -12070,7 +12089,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 12759	1	2	JOSÉ VIANA DE CARVALHO	01545230463	4138864	004.144/2004-1	PE	AC 625/2007-2ª CÂMARA ; AC 3195/2007-2ª CÂMARA ; AC 1479/2008-2ª CÂMARA ; AC 2808/2009-2ª CÂMARA ; AC 4822/2009-2ª CÂMARA	2009/12/08 00:00:00
 12760	1	2	JOSÉ VIANA PÓVOA CAMELO	03000095268	4299207	003.125/2005-0	TO	AC 1834/2008-2ª CÂMARA ; AC 3917/2008-2ª CÂMARA ; AC 3491/2009-2ª CÂMARA ; AC 1068/2010-2ª CÂMARA ; AC 3695/2010-2ª CÂMARA	2010/08/17 00:00:00
 12761	1	2	JOSÉ VIANA PÓVOA CAMELO	03000095268	4221882	014.791/2004-8	TO	AC 3487/2009-1ª CÂMARA ; AC 4741/2009-1ª CÂMARA ; AC 2138/2010-1ª CÂMARA ; AC 4535/2010-1ª CÂMARA	2010/10/02 00:00:00
-12762	1	2	JOSÉ VIANA SABINO	01476491100	3725640	013.280/2002-6	MT	AC 1595/2011-1ª CÂMARA	2011/07/09 00:00:00
 12763	1	2	JOSÉ VIANA SABINO	01476491100	42782966	022.867/2008-5	MT	AC 7194/2010-2ª CÂMARA	2012/11/13 00:00:00
 12764	1	2	JOSÉ VICENTE AMORIM	06658890200	44640957	008.658/2010-2	AM	AC 1581/2011-2ª CÂMARA	2011/05/14 00:00:00
 12765	1	2	JOSÉ VICENTE AMORIM	06658890200	45227168	031.533/2010-8	AM	AC 3657/2012-2ª CÂMARA ; AC 4471/2012-2ª CÂMARA	2012/08/15 00:00:00
@@ -12379,6 +12397,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 13067	1	2	LAURINDO FARIA PETELINKAR	70903093804	43064789	025.031/2008-2	MS	AC 155/2013-PLENÁRIO ; AC 871/2013-PLENÁRIO ; AC 2509/2014-PLENÁRIO	2014/10/21 00:00:00
 13068	1	2	LAURINDO MORAIS DE OLIVEIRA	28421965891	3943222	012.797/2003-4	SP	AC 3742/2010-1ª CÂMARA ; AC 2703/2011-1ª CÂMARA	2012/12/12 00:00:00
 13069	1	2	LAURINETE MARIA DE LIMA MELO	78695112420	43677604	027.320/2008-4	AL	AC 2134/2009-PLENÁRIO	2011/06/28 00:00:00
+13158	1	2	LEÔNIDAS CORREIA DE CASTRO	16665031187	44373240	025.153/2009-3	TO	AC 2803/2010-2ª CÂMARA	2010/07/07 00:00:00
 13070	1	2	LAURO CALDEIRA CONSTANTINO	32586914791	3527799	017.356/2001-6	RJ	AC 1703/2009-2ª CÂMARA ; AC 2755/2011-2ª CÂMARA	2009/09/12 00:00:00
 13071	1	2	LAURO CESAR LEVANDOSKI	08910308915	45463557	003.159/2011-6	PR	AC 2284/2013-2ª CÂMARA	2013/06/25 00:00:00
 13072	1	2	LAURO DA COSTA NERI FILHO	04371739253	3982687	015.266/2003-4	DF	AC 1526/2009-PLENÁRIO ; AC 2843/2014-PLENÁRIO	2015/07/24 00:00:00
@@ -12467,7 +12486,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 13155	1	2	LEONEL WOHLFAHRT	30974224049	42769622	019.935/2007-7	MT	AC 6780/2011-2ª CÂMARA ; AC 8908/2012-2ª CÂMARA	2013/04/24 00:00:00
 13156	1	2	LEONEL WOHLFAHRT	30974224049	43005124	018.149/2008-2	MT	AC 4220/2011-2ª CÂMARA ; AC 5829/2012-2ª CÂMARA	2013/04/30 00:00:00
 13157	1	2	LEONES PEREIRA GOMES	50427326320	51661667	018.859/2014-3	PI	AC 2673/2015-2ª CÂMARA	2015/09/29 00:00:00
-13158	1	2	LEÔNIDAS CORREIA DE CASTRO	16665031187	44373240	025.153/2009-3	TO	AC 2803/2010-2ª CÂMARA	2010/07/07 00:00:00
 13159	1	2	LEÔNIDAS FERREIRA DE PAULA	00297070487	43009816	018.768/2008-0	RN	AC 2178/2011-PLENÁRIO ; AC 2590/2011-PLENÁRIO	2011/11/08 00:00:00
 13160	1	2	LEÔNIDAS GREGÓRIO DE ALMEIDA	09536914620	45466497	003.238/2011-3	MG	AC 5700/2013-1ª CÂMARA	2013/10/16 00:00:00
 13161	1	2	LEÔNIDAS PEREIRA SANTOS	14503913115	3533086	007.091/2001-5	DF	AC 1873/2007-2ª CÂMARA ; AC 738/2011-PLENÁRIO	2011/09/21 00:00:00
@@ -13807,6 +13825,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 14495	1	2	MARIVALDO DA SILVA	74377310968	43398066	026.050/2008-2	RS	AC 958/2011-1ª CÂMARA ; AC 2216/2011-1ª CÂMARA ; AC 10048/2011-1ª CÂMARA	2012/01/11 00:00:00
 14496	1	2	MARIVALDO DA SILVA	74377310968	43398127	026.060/2008-9	RS	AC 10396/2011-1ª CÂMARA ; AC 2072/2012-1ª CÂMARA ; AC 530/2013-1ª CÂMARA	2014/06/07 00:00:00
 14497	1	2	MARIVALDO DA SILVA	74377310968	43398069	026.053/2008-4	RS	AC 7048/2013-1ª CÂMARA ; AC 1375/2015-1ª CÂMARA	2015/06/09 00:00:00
+14541	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42484537	009.198/2006-1	MA	AC 2497/2010-PLENÁRIO ; AC 17/2012-PLENÁRIO	2011/06/10 00:00:00
 14498	1	2	MARIVALDO PAES DA COSTA	02345811234	42774613	020.699/2007-0	PA	AC 1018/2009-1ª CÂMARA ; AC 1762/2009-1ª CÂMARA ; AC 3421/2009-1ª CÂMARA ; AC 1754/2012-PLENÁRIO	2009/06/02 00:00:00
 14499	1	2	MARIVANDA MARIA SANTOS	12986054587	42685922	030.519/2007-8	BA	AC 4133/2009-1ª CÂMARA	2009/10/08 00:00:00
 14500	1	2	MARIZA PEREIRA DOS SANTOS GALVÃO	18817106453	51358252	012.804/2014-2	RN	AC 4090/2015-1ª CÂMARA	2015/10/29 00:00:00
@@ -13851,7 +13870,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 14538	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42491744	009.985/2006-7	MA	AC 0894/2010-PLENÁRIO ; AC 943/2012-PLENÁRIO	2010/09/01 00:00:00
 14539	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42490700	009.753/2006-2	MA	AC 1682/2009-PLENÁRIO	2010/11/13 00:00:00
 14540	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42486362	009.514/2006-3	MA	AC 1460/2010-PLENÁRIO ; AC 942/2011-PLENÁRIO	2010/11/23 00:00:00
-14541	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42484537	009.198/2006-1	MA	AC 2497/2010-PLENÁRIO ; AC 17/2012-PLENÁRIO	2011/06/10 00:00:00
 14542	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42492658	010.161/2006-4	MA	AC 7350/2009-1ª CÂMARA ; AC 2097/2011-2ª CÂMARA	2011/08/19 00:00:00
 14543	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42491756	009.986/2006-4	MA	AC 2670/2009-PLENÁRIO ; AC 348/2011-PLENÁRIO	2011/08/19 00:00:00
 14544	1	2	MAURA PATRÍCIA AGUIAR MENDES	76085244304	42493980	010.323/2006-4	MA	AC 4017/2010-2ª CÂMARA ; AC 2702/2011-2ª CÂMARA	2011/09/13 00:00:00
@@ -14690,6 +14708,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 15379	1	2	PAULO ROBERTO MACHADO LEÃO	06018491168	42782966	022.867/2008-5	MT	AC 7194/2010-2ª CÂMARA	2011/03/02 00:00:00
 15380	1	2	PAULO ROBERTO NERY	07530790544	47375699	032.311/2011-7	PE	AC 5506/2013-2ª CÂMARA ; AC 3533/2015-2ª CÂMARA ; AC 209/2016-PLENÁRIO ; AC 1395/2016-PLENÁRIO	2015/08/01 00:00:00
 15381	1	2	PAULO ROBERTO NOBRE SILVA	28600851572	42759192	019.162/2007-0	DF	AC 6652-1ª CÂMARA ; AC 2193/2011-1ª CÂMARA	2011/08/31 00:00:00
+15513	1	2	PÉRICLES PIRES CHAVES	13451499304	44220155	018.060/2009-2	PI	AC 4993/2011-2ª CÂMARA	2011/08/10 00:00:00
 15382	1	2	PAULO ROBERTO NOGUEIRA	04382420687	3780640	016.873/2002-8	MG	AC 1823/2008-2ª CÂMARA ; AC 2831/2008-2ª CÂMARA ; AC 1045/2013-2ª CÂMARA	2015/09/16 00:00:00
 15383	1	2	PAULO ROBERTO PACHECO SAAD	12400327149	42910668	005.897/2008-0	GO	AC 2389/2009-2ª CÂMARA	2009/06/09 00:00:00
 15384	1	2	PAULO ROBERTO PEREIRA	17808774553	44183382	015.885/2009-1	BA	AC 1934/2011-1ª CÂMARA	2014/12/17 00:00:00
@@ -14821,7 +14840,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 15510	1	2	PEPKRAKTE JAKUKREIKAPITI RONORE KONXARTI	32893922287	49821798	007.213/2013-1	PA	AC 5671/2015-2ª CÂMARA	2015/11/13 00:00:00
 15511	1	2	PERBOYRE SILVA DIOGENES	15694720334	3809938	019.454/2002-4	CE	AC 1458/2010-1ª CÂMARA ; AC 4765/2011-1ª CÂMARA	2011/10/05 00:00:00
 15512	1	2	PÉRICLES PIRES CHAVES	13451499304	44589261	005.732/2010-7	PI	AC 7079/2010-1ª CÂMARA	2010/12/10 00:00:00
-15513	1	2	PÉRICLES PIRES CHAVES	13451499304	44220155	018.060/2009-2	PI	AC 4993/2011-2ª CÂMARA	2011/08/10 00:00:00
 15514	1	2	PERSEU FERNANDO DOS SANTOS	62172182834	45044102	025.536/2010-9	SP	AC 3627/2011-2ª CÂMARA	2011/10/29 00:00:00
 15515	1	2	PETER MANTOVANELLI BARBOSA	67211259604	42717766	013.357/2007-4	MG	AC 1489/2009-2ª CÂMARA ; AC 1814/2010-2ª CÂMARA	2010/06/22 00:00:00
 15516	1	2	PETRÔNIO FERREIRA SOARES	14115239468	927469	750.173/1996-3	RO	AC 1112/2006-2ª CÂMARA ; AC 3193/2008-2ª CÂMARA ; AC 4176/2009-2ª CÂMARA	2009/10/02 00:00:00
@@ -15533,6 +15551,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 16222	1	2	RUBENS PEREIRA E SILVA	13781669300	4417740	015.593/2005-4	MA	AC 4921/2009-1ª CÂMARA	2009/10/21 00:00:00
 16223	1	2	RUBENS RIBEIRO BATISTA	32518986634	3470614	013.509/2000-0	MG	AC 2610/2008-PLENÁRIO	2008/12/19 00:00:00
 16224	1	2	RUBENS RIBEIRO BATISTA	32518986634	42468651	006.646/2006-9	MG	AC 2998/2006-1ª CÂMARA	2009/08/07 00:00:00
+16269	1	2	SALVADOR LOPES GONSALVES	04311400578	44779571	015.013/2010-3	BA	AC 2904/2012-1ª CÂMARA	2012/10/16 00:00:00
 16225	1	2	RUBENS SANDER PONTAROLO	02900320917	46106780	014.425/2011-4	PR	AC 7608/2012-1ª CÂMARA ; AC 7445/2013-1ª CÂMARA ; AC 615/2014-1ª CÂMARA	2014/04/03 00:00:00
 16226	1	2	RUBENS SEVERINO DE AGUIAR	32862989134	44163173	014.931/2009-1	GO	AC 5166/2009-1ª CÂMARA ; AC 2969/2010-1ª CÂMARA	2010/10/06 00:00:00
 16227	1	2	RUBENS VITOR DE OLIVEIRA	07839901620	45365317	000.112/2011-9	MG	AC 1487/2012-1ª CÂMARA ; AC 3731/2012-1ª CÂMARA	2012/08/31 00:00:00
@@ -15577,7 +15596,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 16266	1	2	SALMON LUSTOSA CAVALCANTI FILHO	05765696821	44439622	028.038/2009-5	PI	AC 1324/2011-2ª CÂMARA ; AC 3929/2012-2ª CÂMARA ; AC 239/2013-2ª CÂMARA	2013/03/22 00:00:00
 16267	1	2	SALOMÃO DE ARAÚJO SILVA	23073810234	3766986	015.740/2002-7	AM	AC 4608/2010-2ª CÂMARA	2010/09/28 00:00:00
 16268	1	2	SALOMÃO DE ARAÚJO SILVA	23073810234	44876782	018.987/2010-9	AM	AC 8656/2011-2ª CÂMARA	2011/11/24 00:00:00
-16269	1	2	SALVADOR LOPES GONSALVES	04311400578	44779571	015.013/2010-3	BA	AC 2904/2012-1ª CÂMARA	2012/10/16 00:00:00
 16270	1	2	SALVIANO AUGUSTO DE ALMEIDA MARIZ	31299970400	3813484	000.568/2003-9	SE	AC 2850/2007-1ª CÂMARA ; AC 3470/2009-1ª CÂMARA	2009/07/29 00:00:00
 16271	1	2	SALVIANO AUGUSTO DE ALMEIDA MARIZ	31299970400	42844896	029.015/2007-9	SE	AC 8055/2010-1ª CÂMARA ; AC 8889/2011-1ª CÂMARA	2011/01/06 00:00:00
 16272	1	2	SÁLVIO JESUS DE CASTRO E COSTA	00189073349	4108990	001.037/2004-8	MA	AC 1554/2008-2ª CÂMARA ; AC 2340/2008-2ª CÂMARA	2008/10/03 00:00:00
@@ -15976,6 +15994,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 16665	1	2	SUELI REIMBERG KLEIN DE OLIVEIRA ROCHA	36045898869	44703168	011.261/2010-2	SP	AC 2038/2010-PLENÁRIO ; AC 3321/2010-PLENÁRIO	2011/02/22 00:00:00
 16666	1	2	SUELY BARBOSA DE FARIAS	04994928460	48221958	009.556/2012-5	AL	AC 2155/2014-PLENÁRIO	2014/09/18 00:00:00
 16667	1	2	SUELY CARVALHO NEVES	31675123934	48191620	009.188/2012-6	PE	AC 1080/2013-2ª CÂMARA	2013/04/09 00:00:00
+16751	1	2	TERESINHA DO CARMO ARAÚJO	06353898860	44610006	007.008/2010-4	SP	AC 1520/2010-PLENÁRIO	2010/08/04 00:00:00
 16668	1	2	SUELY CÔRTE REAL CASTANHO	60935251804	42675922	007.267/2007-0	SP	AC 3938/2009-1ª CÂMARA ; AC 3525/2010-1ª CÂMARA ; AC 8678/2011-1ª CÂMARA	2011/11/04 00:00:00
 16669	1	2	SUELY FARIAS NUNES DA SILVA	14201054420	48449478	013.384/2012-0	RJ	AC 2300/2014-PLENÁRIO	2014/10/21 00:00:00
 16670	1	2	SUELY FARIAS NUNES DA SILVA	14201054420	46143128	015.383/2011-3	RJ	AC 1422/2015-PLENÁRIO ; AC 1633/2015-PLENÁRIO	2015/08/04 00:00:00
@@ -16059,7 +16078,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 16748	1	2	TERESINHA APARECIDA FERREIRA DE SOUSA	02462304878	49224641	038.720/2012-4	SP	AC 3627/2013-PLENÁRIO	2014/03/08 00:00:00
 16749	1	2	TERESINHA APARECIDA FERREIRA DE SOUSA	02462304878	50976511	001.990/2014-4	SP	AC 2634/2014-PLENÁRIO ; AC 701/2015-PLENÁRIO	2015/05/14 00:00:00
 16750	1	2	TERESINHA DO CARMO ARAÚJO	06353898860	42794075	023.312/2007-6	SP	AC 1938/2008-PLENÁRIO	2008/11/05 00:00:00
-16751	1	2	TERESINHA DO CARMO ARAÚJO	06353898860	44610006	007.008/2010-4	SP	AC 1520/2010-PLENÁRIO	2010/08/04 00:00:00
 16752	1	2	TERESINHA DO CARMO ARAÚJO	06353898860	44703168	011.261/2010-2	SP	AC 2038/2010-PLENÁRIO ; AC 3321/2010-PLENÁRIO	2010/10/15 00:00:00
 16753	1	2	TERESINHA MARIA SENA PACIELO	53495950753	3542931	008.801/2001-6	RJ	AC 2098/2007-1ª CÂMARA ; AC 1194/2008-1ª CÂMARA	2013/05/17 00:00:00
 16754	1	2	TEREZA CRISTINA BARBOSA DA SILVA	17462665468	47345161	031.995/2011-0	PE	AC 3074/2012-1ª CÂMARA	2012/08/31 00:00:00
@@ -16542,6 +16560,7 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 17231	1	2	WIGBERTO FERREIRA TARTUCE	03329607149	3517065	003.119/2001-0	DF	AC 487/2008-PLENÁRIO ; AC 550/2010-PLENÁRIO ; AC 1172/2010-PLENÁRIO	2010/08/17 00:00:00
 17232	1	2	WIGBERTO FERREIRA TARTUCE	03329607149	3517409	003.177/2001-3	DF	AC 468/2007-PLENÁRIO ; AC 949/2010-PLENÁRIO ; AC 1725/2010-PLENÁRIO	2010/09/14 00:00:00
 17233	1	2	WIGBERTO FERREIRA TARTUCE	03329607149	3517070	003.121/2001-8	DF	AC 256/2006-PLENÁRIO ; AC 1112/2010-PLENÁRIO ; AC 1758/2010-PLENÁRIO	2010/09/16 00:00:00
+17275	1	2	WILSON DANTAS SOBRINHO	65438345449	44143352	013.850/2009-7	RN	AC 2571/2010-1ª CÂMARA	2010/06/17 00:00:00
 17234	1	2	WIGBERTO FERREIRA TARTUCE	03329607149	3517005	003.112/2001-9	DF	AC 459/2004-PLENÁRIO ; AC 1514/2010-PLENÁRIO ; AC 2059/2010-PLENÁRIO	2010/09/30 00:00:00
 17235	1	2	WIGBERTO FERREIRA TARTUCE	03329607149	3517460	003.188/2001-7	DF	AC 1121/2009-PLENÁRIO ; AC 1596/2010-PLENÁRIO ; AC 2295/2010-PLENÁRIO	2010/10/12 00:00:00
 17236	1	2	WIGBERTO FERREIRA TARTUCE	03329607149	3517090	003.129/2001-6	DF	AC 0913/2009-PLENÁRIO ; AC 248/2010-PLENÁRIO ; AC 620/2010-PLENÁRIO	2010/11/11 00:00:00
@@ -16584,7 +16603,6 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 17272	1	2	WILSON CARGNIN	23922524915	43969930	003.439/2009-4	MT	AC 5510/2010-2ª CÂMARA ; AC 8159/2011-2ª CÂMARA ; AC 3177/2013-PLENÁRIO	2010/12/09 00:00:00
 17273	1	2	WILSON CHOERI	00863998704	42987572	016.008/2008-5	RJ	AC 926/2012-2ª CÂMARA ; AC 7608/2012-2ª CÂMARA	2012/11/24 00:00:00
 17274	1	2	WILSON DANTAS SOBRINHO	65438345449	44291661	021.163/2009-1	RN	AC 586/2010-1ª CÂMARA	2010/03/16 00:00:00
-17275	1	2	WILSON DANTAS SOBRINHO	65438345449	44143352	013.850/2009-7	RN	AC 2571/2010-1ª CÂMARA	2010/06/17 00:00:00
 17276	1	2	WILSON DE OLIVEIRA SOARES	19047541634	4189971	010.758/2004-5	MG	AC 1911/2008-PLENÁRIO ; AC 2430/2008-PLENÁRIO	2009/02/19 00:00:00
 17277	1	2	WILSON DONIZETE GAGLIANO	43841490930	46957934	028.346/2011-4	PR	AC 2510/2013-2ª CÂMARA ; AC 509/2014-2ª CÂMARA ; AC 2392/2015-2ª CÂMARA ; AC 3537/2016-2ª CÂMARA ; AC 6846/2016-2ª CÂMARA	2015/09/10 00:00:00
 17278	1	2	WILSON FERREIRA LISBOA	05262950230	44499660	000.251/2010-0	AM	AC 11198/2011-2ª CÂMARA ; AC 2383/2015-2ª CÂMARA	2015/06/13 00:00:00
@@ -16655,8 +16673,8 @@ COPY pessoa_restricao_tcu (id, restritor_id, provenance_id, nome, cpf, numproces
 
 
 --
--- TOC entry 2424 (class 0 OID 16409)
--- Dependencies: 183
+-- TOC entry 2159 (class 0 OID 25047)
+-- Dependencies: 185
 -- Data for Name: provenance; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -16667,8 +16685,8 @@ COPY provenance (id, label, filename, source, complement, date) FROM stdin;
 
 
 --
--- TOC entry 2441 (class 0 OID 0)
--- Dependencies: 184
+-- TOC entry 2175 (class 0 OID 0)
+-- Dependencies: 186
 -- Name: provenance_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -16676,8 +16694,8 @@ SELECT pg_catalog.setval('provenance_id_seq', 3, true);
 
 
 --
--- TOC entry 2426 (class 0 OID 16417)
--- Dependencies: 185
+-- TOC entry 2161 (class 0 OID 25063)
+-- Dependencies: 187
 -- Data for Name: restritor; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -16689,8 +16707,8 @@ COPY restritor (id, label) FROM stdin;
 
 
 --
--- TOC entry 2442 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2176 (class 0 OID 0)
+-- Dependencies: 188
 -- Name: restritor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -16698,7 +16716,7 @@ SELECT pg_catalog.setval('restritor_id_seq', 3, true);
 
 
 --
--- TOC entry 2299 (class 2606 OID 16541)
+-- TOC entry 2029 (class 2606 OID 25075)
 -- Name: pessoa_restricao2_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16707,7 +16725,7 @@ ALTER TABLE ONLY pessoa_restricao_cgu
 
 
 --
--- TOC entry 2293 (class 2606 OID 16429)
+-- TOC entry 2027 (class 2606 OID 25077)
 -- Name: pessoa_restricao_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16716,7 +16734,7 @@ ALTER TABLE ONLY pessoa_restricao_tcu
 
 
 --
--- TOC entry 2295 (class 2606 OID 16431)
+-- TOC entry 2031 (class 2606 OID 25079)
 -- Name: provenance_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16725,7 +16743,7 @@ ALTER TABLE ONLY provenance
 
 
 --
--- TOC entry 2297 (class 2606 OID 16433)
+-- TOC entry 2033 (class 2606 OID 25081)
 -- Name: restritor_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16734,7 +16752,7 @@ ALTER TABLE ONLY restritor
 
 
 --
--- TOC entry 2302 (class 2606 OID 16542)
+-- TOC entry 2036 (class 2606 OID 25082)
 -- Name: provenance_restricao2_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16743,7 +16761,7 @@ ALTER TABLE ONLY pessoa_restricao_cgu
 
 
 --
--- TOC entry 2300 (class 2606 OID 16434)
+-- TOC entry 2034 (class 2606 OID 25087)
 -- Name: provenance_restricao_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16752,7 +16770,7 @@ ALTER TABLE ONLY pessoa_restricao_tcu
 
 
 --
--- TOC entry 2303 (class 2606 OID 16547)
+-- TOC entry 2037 (class 2606 OID 25092)
 -- Name: restritor_restricao2_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16761,7 +16779,7 @@ ALTER TABLE ONLY pessoa_restricao_cgu
 
 
 --
--- TOC entry 2301 (class 2606 OID 16439)
+-- TOC entry 2035 (class 2606 OID 25097)
 -- Name: restritor_restricao_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -16770,7 +16788,7 @@ ALTER TABLE ONLY pessoa_restricao_tcu
 
 
 --
--- TOC entry 2435 (class 0 OID 0)
+-- TOC entry 2169 (class 0 OID 0)
 -- Dependencies: 7
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
@@ -16781,7 +16799,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2016-07-13 10:39:07 BRT
+-- Completed on 2016-07-13 11:24:21
 
 --
 -- PostgreSQL database dump complete

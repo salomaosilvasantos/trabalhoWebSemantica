@@ -12,38 +12,61 @@
 @prefix dc: <http://dublincore.org/documents/dc-rdf/> .
 @prefix dcterms: <http://dublincore.org/documents/dcmi-terms/> .
 @prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbr: <http://dbpedia.org/resource/>.
+@prefix time: <http://www.w3.org/TR/owl-time/>.
 
 
- map:Restritor a rr:TriplesMap;
+ map:Person a rr:TriplesMap;
 
     rr:logicalTable [ 
-            rr:sqlQuery """SELECT * from restritor""" ];
+            rr:sqlQuery """SELECT * from pessoa_tcu_view""" ];
 
     rr:subjectMap [
 
-        rr:template "Restritor/{id}/";
+        rr:template "Person/{ID}/";
 
-        rr:class vocab:Restritor;
+        rr:class foaf:Person;
 
     ];
 
-	rr:predicateObjectMap [
+    
+
+    rr:predicateObjectMap [
 
 
-        rr:predicate rdfs:label;
+        rr:predicate foaf:name;
 
 
         rr:objectMap [            
 
 
-            rr:template "{label}"; 
+            rr:template "{Nome}"; 
 
             rr:termType rr:Literal;
 
         ];
 
-    ];
-   
+    ]; 
+	
+	rr:predicateObjectMap [
+
+
+        rr:predicate dbo:cpf;
+
+
+        rr:objectMap [            
+
+
+            rr:template "{CPF}"; 
+
+            rr:termType rr:Literal;
+
+        ];
+
+    ]; 
+
+    
+
  .
 
 
