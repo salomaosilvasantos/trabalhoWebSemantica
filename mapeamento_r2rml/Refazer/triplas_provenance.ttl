@@ -1,0 +1,10 @@
+<http://localhost:2020/Provenance/2/> <http://www.w3.org/2000/01/rdf-schema#label> "Responsaveis por Contas Julgadas Irregulares Eleicoes 2016" .
+<http://localhost:2020/Provenance/3/> <http://www.w3.org/2000/01/rdf-schema#label> "Cadastro de Empresas Inidoneas e Suspensas" .
+<http://localhost:2020/Provenance/2/> <http://dublincore.org/documents/dc-rdf/source> "http://www.tse.jus.br/eleicoes/eleicoes-2016/gestores-publicos-com-contas-julgadas-irregulares-pelo-tcu" .
+<http://localhost:2020/Provenance/3/> <http://dublincore.org/documents/dc-rdf/source> "http://www.portaldatransparencia.gov.br/downloads/snapshot.asp?c=CEIS" .
+<http://localhost:2020/Provenance/2/> <http://www.w3.org/TR/owl-time/date> "2016-07-11" .
+<http://localhost:2020/Provenance/3/> <http://www.w3.org/TR/owl-time/date> "2016-07-11" .
+<http://localhost:2020/Provenance/2/> <http://dbpedia.org/resource/fileName> "ResponsaveisContasJulgadasIrregularesEleicoes2016_Alfabetico.csv" .
+<http://localhost:2020/Provenance/3/> <http://dbpedia.org/resource/fileName> "20160711_CEIS.csv" .
+<http://localhost:2020/Provenance/2/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdf.ontology2.com/vocab#Provenance> .
+<http://localhost:2020/Provenance/3/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdf.ontology2.com/vocab#Provenance> .
