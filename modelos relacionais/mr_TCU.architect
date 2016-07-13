@@ -6,9 +6,9 @@
   <data-source id="DS0">
    <property key="Connection Type" value="PostgreSQL" />
    <property key="Logical" value="(Target Database)" />
-   <property key="JDBC URL" value="jdbc:postgresql://localhost:5432/TCU" />
+   <property key="JDBC URL" value="jdbc:postgresql://localhost:5432/Mashup" />
    <property key="UID" value="postgres" />
-   <property key="PWD" value="joncsi95" />
+   <property key="PWD" value="admin" />
    <property key="ca.sqlpower.architect.etl.kettle.database" value="" />
    <property key="ca.sqlpower.architect.etl.kettle.port" value="" />
    <property key="ca.sqlpower.architect.etl.kettle.hostname" value="" />
@@ -89,10 +89,10 @@
     <column id="COL20" populated="true" UUID="39e2c6e3-b236-4f48-831c-b52654a70fb3" autoIncrement="false" autoIncrementSequenceName="pessoa_CPF_seq" defaultValue="" name="CPF" nullable="0" physicalName="CPF" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
-    <column id="COL21" populated="true" UUID="fbf5a595-aed4-4095-a76b-080655c4cfc8" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_NumProcess_seq" defaultValue="" name="NumProcess" nullable="0" physicalName="NumProcess" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="-5" userDefinedTypeUUID="433cc8af-284d-4abb-8ef7-08ebcb34dbf1" >
+    <column id="COL21" populated="true" UUID="fbf5a595-aed4-4095-a76b-080655c4cfc8" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_NumProcess_seq" defaultValue="" name="NumProcess" nullable="0" physicalName="NumProcess" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
-    <column id="COL22" populated="true" UUID="97ecf4b0-e1a9-4e6d-a186-4ff36419eabd" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_licitar_seq" defaultValue="" name="licitar" nullable="0" physicalName="licitar" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+    <column id="COL22" populated="true" UUID="97ecf4b0-e1a9-4e6d-a186-4ff36419eabd" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_licitar_seq" defaultValue="" name="licitar" nullable="1" physicalName="licitar" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
     <column id="COL23" populated="true" UUID="e4afc56e-1317-45a8-b2a9-7f92de7562cd" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_date_seq" defaultValue="" name="date" nullable="0" physicalName="date" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
@@ -104,35 +104,38 @@
     <column id="COL25" populated="true" UUID="ad2c786e-ac95-4c94-af69-9c94118cfd26" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_OrgaoSancionador_seq" defaultValue="" name="OrgaoSancionador" nullable="0" physicalName="OrgaoSancionador" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
      <remarks></remarks>
     </column>
+    <column id="COL26" populated="true" UUID="2ada5669-e8dc-49a2-9af2-aaaf0618ee0f" autoIncrement="false" autoIncrementSequenceName="pessoa_restricao_tipoSancao_seq" defaultValue="" name="tipoSancao" nullable="1" physicalName="tipoSancao" precision="0" referenceCount="1" scale="0" sourceDataTypeName="UserDefinedSQLType" type="12" userDefinedTypeUUID="831ac2d4-0e65-47ec-a0b7-62b7f6b8760a" >
+     <remarks></remarks>
+    </column>
     </folder>
     <folder id="FOLTAB153" populated="true" name="Exported Keys" physicalName="Exported Keys" type="3">
     </folder>
     <folder id="FOLTAB152" populated="true" name="Imported Keys" physicalName="Imported Keys" type="2">
     </folder>
     <folder id="FOLTAB154" populated="true" name="Indices" physicalName="Indices" type="4">
-    <index id="IDX26" populated="true" UUID="9a2fdb1c-5379-4553-91b1-961bfdeece83" clustered="false" name="pessoa_restricao_pk" physicalName="pessoa_restricao_pk" primaryKeyIndex="true" unique="false" >
-     <index-column id="IDC27" populated="true" UUID="cc42161b-94b1-4adb-ac3c-5cd059492ed7" ascendingOrDescending="UNSPECIFIED" column-ref="COL16" name="id" physicalName="id" />
+    <index id="IDX27" populated="true" UUID="9a2fdb1c-5379-4553-91b1-961bfdeece83" clustered="false" name="pessoa_restricao_pk" physicalName="pessoa_restricao_pk" primaryKeyIndex="true" unique="false" >
+     <index-column id="IDC28" populated="true" UUID="cc42161b-94b1-4adb-ac3c-5cd059492ed7" ascendingOrDescending="UNSPECIFIED" column-ref="COL16" name="id" physicalName="id" />
     </index>
    </folder>
   </table>
   <relationships>
-   <relationship id="REL28" populated="true" UUID="495a639d-2fca-42ea-babd-b6fc11071820" deferrability="7" deleteRule="3" fk-table-ref="TAB15" fkCardinality="7" identifying="true" name="provenance_restricao_fk" physicalName="provenance_restricao_fk" pk-table-ref="TAB1" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP29" populated="true" UUID="60337a19-cf18-46f1-b9a3-1ca450eafad6" fk-column-ref="COL18" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL2" />
+   <relationship id="REL29" populated="true" UUID="495a639d-2fca-42ea-babd-b6fc11071820" deferrability="7" deleteRule="3" fk-table-ref="TAB15" fkCardinality="7" identifying="true" name="provenance_restricao_fk" physicalName="provenance_restricao_fk" pk-table-ref="TAB1" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP30" populated="true" UUID="60337a19-cf18-46f1-b9a3-1ca450eafad6" fk-column-ref="COL18" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL2" />
    </relationship>
-   <relationship id="REL30" populated="true" UUID="2fbcddc3-a15d-46eb-832a-c3d8610322f3" deferrability="7" deleteRule="3" fk-table-ref="TAB15" fkCardinality="7" identifying="true" name="restritor_restricao_fk" physicalName="restritor_restricao_fk" pk-table-ref="TAB10" pkCardinality="2" updateRule="3" >
-    <column-mapping id="CMP31" populated="true" UUID="30c714d0-aa76-4f2f-a58d-2b2cfa0b7a47" fk-column-ref="COL17" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL11" />
+   <relationship id="REL31" populated="true" UUID="2fbcddc3-a15d-46eb-832a-c3d8610322f3" deferrability="7" deleteRule="3" fk-table-ref="TAB15" fkCardinality="7" identifying="true" name="restritor_restricao_fk" physicalName="restritor_restricao_fk" pk-table-ref="TAB10" pkCardinality="2" updateRule="3" >
+    <column-mapping id="CMP32" populated="true" UUID="30c714d0-aa76-4f2f-a58d-2b2cfa0b7a47" fk-column-ref="COL17" name="Column Mapping" physicalName="Column Mapping" pk-column-ref="COL11" />
    </relationship>
   </relationships>
  </target-database>
  <ddl-generator type="ca.sqlpower.architect.ddl.PostgresDDLGenerator" allow-connection="false" target-schema="public"> </ddl-generator>
  <liquibase-settings useSeparateChangeSets="false" generateId="false" idStart="1"/>
  <create-kettle-job-settings filePath="" jobName="" schemaName="" kettleJoinType="0" savingToFile="true" />
- <play-pen zoom="1.0" viewportX="162" viewportY="0" relationship-style="rectilinear" names-displayLogicalNames="true" showPrimaryTag="true" showForeignTag="true" showAlternateTag="true" columnVisibility="ALL" relationshipLabelVisibility="true">
+ <play-pen zoom="1.0" viewportX="0" viewportY="0" relationship-style="rectilinear" names-displayLogicalNames="true" showPrimaryTag="true" showForeignTag="true" showAlternateTag="true" columnVisibility="ALL" relationshipLabelVisibility="true">
   <table-pane table-ref="TAB1" x="849" y="101" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-pane table-ref="TAB10" x="467" y="357" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-pane table-ref="TAB15" x="404" y="85" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
-  <table-link relationship-ref="REL28" pkConnection="0.5221238938053098" fkConnection="0.47096774193548385" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
-  <table-link relationship-ref="REL30" pkConnection="0.5140845070422535" fkConnection="0.4682926829268293" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
+  <table-pane table-ref="TAB10" x="231" y="408" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
+  <table-pane table-ref="TAB15" x="434" y="82" bgColor="0xeeeeee" fgColor="0x000000" rounded="false" dashed="false"/>
+  <table-link relationship-ref="REL29" pkConnection="0.5221238938053098" fkConnection="0.47096774193548385" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="18"/>
+  <table-link relationship-ref="REL31" pkConnection="0.5140845070422535" fkConnection="0.4682926829268293" rLineColor="0x000000" pkLabelText="" fkLabelText="" orientation="72"/>
  </play-pen>
  <critic-manager>
   <critic-grouping platformType="Generic" enabled="true">
