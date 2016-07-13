@@ -1,0 +1,5 @@
+<http://localhost:2020/Provenance/2/> <http://www.w3.org/2000/01/rdf-schema#label> "ResponsaveisContasJulgadasIrregularesEleicoes2016_Alfabetico" .
+<http://localhost:2020/Provenance/2/> <http://dublincore.org/documents/dc-rdf/source> "http://www.tse.jus.br/eleicoes/eleicoes-2016/gestores-publicos-com-contas-julgadas-irregulares-pelo-tcu" .
+<http://localhost:2020/Provenance/2/> <http://www.w3.org/TR/owl-time/date> "2016-07-11" .
+<http://localhost:2020/Provenance/2/> <http://dbpedia.org/resource/fileName> "ResponsaveisContasJulgadasIrregularesEleicoes2016_Alfabetico.csv" .
+<http://localhost:2020/Provenance/2/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example/Provenance> .
