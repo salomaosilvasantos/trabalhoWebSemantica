@@ -534,7 +534,7 @@
            </partitioning>
     <connection>Postgres</connection>
     <schema/>
-    <table>pessoa_restricao</table>
+    <table>pessoa_restricao_cgu</table>
     <commit>1000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
