@@ -1,5 +1,6 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
+@prefix tse: <http://arida.ufc.br/tse/> .
+@prefix map: <#> .
 @prefix map: <http://example/> .
 @prefix vocab: <http://rdf.ontology2.com/vocab#> .
 
@@ -20,7 +21,7 @@ map:Person a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from pessoa_tse_view""" ];
     rr:subjectMap [
-        rr:template "Person/{ID}/";
+        rr:template "http://arida.ufc.br/tse/RestringidoPessoa/{ID}/";
         rr:class foaf:Person;
     ];
     rr:predicateObjectMap [
@@ -31,43 +32,35 @@ map:Person a rr:TriplesMap;
         ];
     ];
   	rr:predicateObjectMap [
-        rr:predicate dbo:cpf;
+        rr:predicate dbr:cpf;
         rr:objectMap [
             rr:template "{CPF}";
             rr:termType rr:Literal;
         ];
       ];
-      #join restricao VERIFICAR CORRETUDE
-      rr:predicateObjectMap [
-          rr:predicate foaf:Person;
-          rr:objectMap [
-              rr:parentTriplesMap <#Restricao>;
-              rr:joinCondition [
-                  rr:child "rid";
-                  rr:parent "rid";
-              ];
-          ];
-      #join prvenance VERIFICAR CORRETUDE
-      rr:predicateObjectMap [
-            rr:predicate foaf:Person;
-            rr:objectMap [
-                rr:parentTriplesMap <#Provenance>;
-                  rr:joinCondition [
-                      rr:child "id";
-                      rr:parent "id";
-                  ];
-            ];
-      ];
+    rr:predicateObjectMap [
+        rr:predicate rdf:id;
+        rr:objectMap [
+            rr:template "{id}";
+            rr:termType rr:Literal;
+        ];
+    ];
 .
 
 #mapeando retricao
-
 map:Restricao a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from restricao_tse_view""" ];
     rr:subjectMap [
-        rr:template "Restricao/{rid}/";
-        rr:class foaf:Person;
+        rr:template "http://arida.ufc.br/tse/Restricao/{rid}/";
+        rr:class foaf:Restricao;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate rdf:id;
+        rr:objectMap [
+            rr:template "{rid}";
+            rr:termType rr:Literal;
+        ];
     ];
 	  rr:predicateObjectMap [
 		    rr:predicate vocab:numProcess;
@@ -85,24 +78,43 @@ map:Restricao a rr:TriplesMap;
 	  ];
 .
 
+#relacao entre as tabela pessoa e restricao
+   map:Person_tem_restricao
+	       rr:logicalTable [ rr:sqlQuery """
+                 SELECT p.id as id_pessoa, r.rid as id_restricao
+		             FROM pessoa_tse_view p, restricao_tse_view r
+		             WHERE p.id= r.pessoa_id
+	       """ ];
+	       rr:subjectMap [
+		            rr:template 'http://arida.ufc.br/tse/RestringidoPessoa/{"id_pessoa"}';
+		            rr:class foaf:Person;
+	       ];
+	       rr:predicateObjectMap [
+		            rr:predicate tse:temRestricao;
+		            rr:objectMap [
+			                rr:parentTriplesMap map:Restricao;
+			                rr:joinCondition[
+				                     rr:child 'id_restricao';
+				                     rr:parent 'rid';
+			                ]
+		           ]
+	      ].
+
 #mapeando tabela provenance
 
  map:Provenance a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from provenance""" ];
     rr:subjectMap [
-        rr:template "Provenance/{id}/";
+        rr:template "http://arida.ufc.br/tse/Provenance/{id}/";
         rr:class vocab:Provenance;
     ];
   	rr:predicateObjectMap [
-
           rr:predicate rdfs:label;
-
           rr:objectMap [
               rr:template "{label}";
               rr:termType rr:Literal;
           ];
-
     ];
   	rr:predicateObjectMap [
           rr:predicate dbr:fileName;
@@ -132,4 +144,73 @@ map:Restricao a rr:TriplesMap;
               rr:termType rr:Literal;
           ];
     ];
+.
+
+#relacao entre as tabela restricao e provenance
+   map:Restritor_tem_provenance
+	      rr:logicalTable [ rr:sqlQuery """
+              SELECT r.rid as id_restricao, p.id as id_provenance
+		          FROM restricao_tse_view r, provenance p
+		          WHERE r.provenance_id= p.id
+	      """ ];
+	      rr:subjectMap [
+		           rr:template 'http://arida.ufc.br/tse/restricao/{"id_restricao"}';
+		           rr:class tse:Restricao;
+	      ];
+	      rr:predicateObjectMap [
+		          rr:predicate tse:temProvenance;
+		          rr:objectMap [
+			               rr:parentTriplesMap map:Provenance;
+			               rr:joinCondition[
+				                     rr:child 'id_provenance';
+				                     rr:parent 'id';
+			               ]
+		         ]
+	      ].
+
+#Mapeamento table Restritor
+    map:Restritor a rr:TriplesMap;
+        rr:logicalTable [
+                rr:sqlQuery """SELECT * from restritor""" ];
+        rr:subjectMap [
+              rr:template "http://arida.ufc.br/tse/Restritor/{id}/";
+              rr:class tse:Restritor;
+        ];
+        rr:predicateObjectMap [
+              rr:predicate rdf:id;
+              rr:objectMap [
+                     rr:template "{id}";
+                     rr:termType rr:Literal;
+              ];
+        ];
+        rr:predicateObjectMap [
+              rr:predicate rdfs:label;
+              rr:objectMap [
+                    rr:template "{label}";
+                    rr:termType rr:Literal;
+              ];
+        ];
+  .
+
+#relacao entre as tabela restricao e restritor
+    map:restricao_tem_restritor
+  	     rr:logicalTable [ rr:sqlQuery """
+                  SELECT res.rid as restricao_id, r.id as restritor_id
+  		            FROM restricao_tse_view res, restritor r
+  		            WHERE res.restritor_id=r.id
+  	     """ ];
+  	     rr:subjectMap [
+  		        rr:template 'http://arida.ufc.br/tse/restricao/{"restricao_id"}';
+  		        rr:class tse:Restricao;
+  	     ];
+  	     rr:predicateObjectMap [
+  		       rr:predicate tse:temRestritor;
+  		       rr:objectMap [
+  			          rr:parentTriplesMap map:Restritor;
+  			          rr:joinCondition[
+  				              rr:child 'restricao_id';
+  				              rr:parent 'id';
+  			          ]
+  		       ]
+  	     ]
 .
