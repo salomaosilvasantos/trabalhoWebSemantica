@@ -19,7 +19,7 @@
  map:Person a rr:TriplesMap;
 
     rr:logicalTable [ 
-            rr:sqlQuery """SELECT * from pessoa_tcu_view""" ];
+            rr:sqlQuery """SELECT * from pessoa_tse_view""" ];
 
     rr:subjectMap [
 

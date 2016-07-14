@@ -19,7 +19,7 @@
  map:Person a rr:TriplesMap;
 
     rr:logicalTable [ 
-            rr:sqlQuery """SELECT * from pessoa_tcu_view""" ];
+            rr:sqlQuery """SELECT * from pessoa_cgu_view""" ];
 
     rr:subjectMap [
 
@@ -65,84 +65,38 @@
 
     ]; 
 
-    
-
  .
 
-#mapeando tabela restricao
+#mapeando restricao
 
 map:Restricao a rr:TriplesMap;
 
     rr:logicalTable [ 
-            rr:sqlQuery """SELECT * from restricao_tcu_view""" ];
+            rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
 
     rr:subjectMap [
 
         rr:template "Restricao/{rid}/";
 
-        rr:class foaf:Person;
+        rr:class vocab:Restricao;
 
     ];
 
-	rr:predicateObjectMap [
+    
+
+    rr:predicateObjectMap [
 
 
-		rr:predicate vocab:numProcess;
+        rr:predicate vocab:numProcess;
 
-
-		rr:objectMap [            
-
-
-		    rr:template "{numProcess}"; 
-
-		    rr:termType rr:Literal;
-
-		];
-
-	    ];
-
-	rr:predicateObjectMap [
-
-		rr:predicate time:date;
-
-		rr:objectMap [            
-		    rr:template "{date}"; 
-		    rr:termType rr:Literal;
-		];
-
-	    ];
-.
-
-#mapeando tabela provenance
-
- map:Provenance a rr:TriplesMap;
-
-    rr:logicalTable [ 
-            rr:sqlQuery """SELECT * from provenance""" ];
-
-    rr:subjectMap [
-        rr:template "Provenance/{id}/";
-        rr:class vocab:Provenance;
-    ];
-
-	rr:predicateObjectMap [
-
-        rr:predicate rdfs:label;
 
         rr:objectMap [            
-            rr:template "{label}"; 
+
+
+            rr:template "{numProcess}"; 
+
             rr:termType rr:Literal;
-        ];
 
-    ];
-	
-	rr:predicateObjectMap [
-
-        rr:predicate dbr:fileName;
-
-        rr:objectMap [            
-            rr:template "{filename}"; 
-            rr:termType rr:Literal;
         ];
 
     ]; 
@@ -158,27 +112,16 @@ map:Restricao a rr:TriplesMap;
 
     ]; 
 	
-	rr:predicateObjectMap [
-
-        rr:predicate dc:source;
-
-        rr:objectMap [            
-            rr:template "{source}"; 
-            rr:termType rr:Literal;
-        ];
-
-    ]; 
 	
 	rr:predicateObjectMap [
 
-        rr:predicate vocab:complement;
+        rr:predicate vocab:tipoRestricao;
 
         rr:objectMap [            
-            rr:template "{complement}"; 
+            rr:template "{tipo_sancao}"; 
             rr:termType rr:Literal;
         ];
 
     ]; 
-   
  .
 
