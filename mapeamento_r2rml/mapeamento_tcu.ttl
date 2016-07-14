@@ -1,6 +1,6 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
-@prefix map: <http://example/> .
+@prefix tcu: <http://arida.ufc.br/tcu/> .
+@prefix map: <#> .
 @prefix vocab: <http://rdf.ontology2.com/vocab#> .
 
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
@@ -16,118 +16,185 @@
 @prefix time: <http://www.w3.org/TR/owl-time/>.
 
 
+#Mapeamento com view pessoa_tcu_view
  map:Person a rr:TriplesMap;
 
-    rr:logicalTable [
+    rr:logicalTable [ 
             rr:sqlQuery """SELECT * from pessoa_tcu_view""" ];
+
     rr:subjectMap [
-        rr:template "Person/{ID}/";
+
+        rr:template "http://arida.ufc.br/tcu/Person/{ID}";
+
+
         rr:class foaf:Person;
+
     ];
+
+    
     rr:predicateObjectMap [
+
+
         rr:predicate foaf:name;
-        rr:objectMap [
-            rr:template "{Nome}";
+
+
+        rr:objectMap [            
+
+
+            rr:template "{Nome}"; 
+
             rr:termType rr:Literal;
+
         ];
-    ];
-	  rr:predicateObjectMap [
+
+    ]; 
+	
+    rr:predicateObjectMap [
+
         rr:predicate dbo:cpf;
-        rr:objectMap [
-            rr:template "{CPF}";
+
+        rr:objectMap [            
+
+            rr:template "{CPF}"; 
+
+            rr:termType rr:Literal;
+
+        ];
+
+    ]; .
+
+#Mapeamento com view restricao_tcu_view
+  map:Restricao a rr:TriplesMap;
+
+    rr:logicalTable [ 
+            rr:sqlQuery """SELECT * from restricao_tcu_view""" ];
+
+    rr:subjectMap [
+
+        rr:template "http://arida.ufc.br/tcu/Restricao/{rid}";
+
+        rr:class tcu:Restricao;
+
+    ];
+
+    rr:predicateObjectMap [
+
+
+	rr:predicate vocab:numProcess;
+
+	rr:objectMap [            
+
+		    rr:template "{numProcess}"; 
+
+		    rr:termType rr:Literal;
+
+		];
+     ];
+
+     rr:predicateObjectMap [
+
+		rr:predicate time:dateEnd;
+
+		rr:objectMap [            
+		    rr:template "{data_final}"; 
+		    rr:termType rr:Literal;
+		];
+     ];.
+
+
+   #relacao entre as tabela pessoa e restricao
+   map:Person_tem_restricao
+	rr:logicalTable [ rr:sqlQuery """
+                SELECT p.id as id_pessoa, r.rid as id_restricao 
+		FROM pessoa_tcu_view p, restricao_tcu_view r
+		WHERE p.id= r.pessoa_id
+	""" ];
+
+	rr:subjectMap [
+		rr:template 'http://arida.ufc.br/tcu/Person/{"id_pessoa"}';
+		rr:class foaf:Person; 
+	];
+
+	rr:predicateObjectMap [ 
+		rr:predicate tcu:temRestricao; 
+		rr:objectMap [
+			rr:parentTriplesMap map:Restricao;
+			rr:joinCondition[
+				rr:child 'id_restricao';
+				rr:parent 'rid';
+			] 
+		]
+	].
+
+
+
+#Mapeamento table Provenance
+  map:Provenance a rr:TriplesMap;
+
+    rr:logicalTable [ 
+            rr:sqlQuery """SELECT * from provenance""" ];
+
+    rr:subjectMap [
+        rr:template "http://arida.ufc.br/tcu/Provenance/{id}/";
+        rr:class tcu:Provenance;
+    ];
+
+    rr:predicateObjectMap [
+
+        rr:predicate rdfs:label;
+
+        rr:objectMap [            
+            rr:template "{label}"; 
             rr:termType rr:Literal;
         ];
+
     ];
-    #join restricao VERIFICAR CORRETUDE
+	
     rr:predicateObjectMap [
-        rr:predicate foaf:Person;
-        rr:objectMap [
-            rr:parentTriplesMap <#Restricao>;
-            rr:joinCondition [
-                rr:child "rid";
-                rr:parent "rid";
-            ];
+
+        rr:predicate dbr:fileName;
+
+        rr:objectMap [            
+            rr:template "{filename}"; 
+            rr:termType rr:Literal;
         ];
-    #join prvenance VERIFICAR CORRETUDE
+
+    ]; 
+	
+	rr:predicateObjectMap [
+
+        rr:predicate time:date;
+
+        rr:objectMap [            
+            rr:template "{date}"; 
+            rr:termType rr:Literal;
+        ];
+
+    ]; 
+	
     rr:predicateObjectMap [
-          rr:predicate foaf:Person;
-          rr:objectMap [
-              rr:parentTriplesMap <#Provenance>;
-                rr:joinCondition [
-                    rr:child "id";
-                    rr:parent "id";
-                ];
-          ];
-    ];
- .
 
-#mapeando tabela restricao
+        rr:predicate dc:source;
 
-map:Restricao a rr:TriplesMap;
-    rr:logicalTable [
-            rr:sqlQuery """SELECT * from restricao_tcu_view""" ];
-    rr:subjectMap [
-        rr:template "Restricao/{rid}/";
-        rr:class foaf:Person;
-    ];
-	  rr:predicateObjectMap [
-    		rr:predicate vocab:numProcess;
-    		rr:objectMap [
-    		    rr:template "{numProcess}";
-    		    rr:termType rr:Literal;
-    		];
-	    ];
-  	rr:predicateObjectMap [
-  		 rr:predicate time:date;
-  		 rr:objectMap [
-  		    rr:template "{date}";
-  		    rr:termType rr:Literal;
-  		 ];
-  	];
-.
+        rr:objectMap [            
+            rr:template "{source}"; 
+            rr:termType rr:Literal;
+        ];
 
-#mapeando tabela provenance
+    ]; 
+	
+    rr:predicateObjectMap [
 
-map:Provenance a rr:TriplesMap;
-    rr:logicalTable [
-            rr:sqlQuery """SELECT * from provenance""" ];
-    rr:subjectMap [
-        rr:template "Provenance/{id}/";
-        rr:class vocab:Provenance;
-    ];
-  	rr:predicateObjectMap [
-          rr:predicate rdfs:label;
-          rr:objectMap [
-              rr:template "{label}";
-              rr:termType rr:Literal;
-          ];
-      ];
-  	rr:predicateObjectMap [
-          rr:predicate dbr:fileName;
-          rr:objectMap [
-              rr:template "{filename}";
-              rr:termType rr:Literal;
-          ];
-      ];
-  	rr:predicateObjectMap [
-          rr:predicate time:date;
-          rr:objectMap [
-              rr:template "{date}";
-              rr:termType rr:Literal;
-          ];
-      ];
-  	rr:predicateObjectMap [
-          rr:predicate dc:source;
-          rr:objectMap [
-              rr:template "{source}";
-              rr:termType rr:Literal;
-          ];
-      ];
-  	rr:predicateObjectMap [
-          rr:predicate vocab:complement;
-          rr:objectMap [
-              rr:template "{complement}";
-              rr:termType rr:Literal;
-          ];
-      ];
-.
+        rr:predicate vocab:complement;
+
+        rr:objectMap [            
+            rr:template "{complement}"; 
+            rr:termType rr:Literal;
+        ];
+
+    ]; .
+
+    
+
+
+ 
