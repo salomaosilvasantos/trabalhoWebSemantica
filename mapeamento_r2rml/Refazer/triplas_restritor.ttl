@@ -1,6 +1,0 @@
-<http://localhost:2020/Restritor/1/> <http://www.w3.org/2000/01/rdf-schema#label> "TCU" .
-<http://localhost:2020/Restritor/2/> <http://www.w3.org/2000/01/rdf-schema#label> "CGU" .
-<http://localhost:2020/Restritor/3/> <http://www.w3.org/2000/01/rdf-schema#label> "TSE" .
-<http://localhost:2020/Restritor/1/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdf.ontology2.com/vocab#Restritor> .
-<http://localhost:2020/Restritor/2/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdf.ontology2.com/vocab#Restritor> .
-<http://localhost:2020/Restritor/3/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdf.ontology2.com/vocab#Restritor> .
