@@ -18,179 +18,122 @@
 
  map:Person a rr:TriplesMap;
 
-    rr:logicalTable [ 
+    rr:logicalTable [
             rr:sqlQuery """SELECT * from pessoa_cgu_view""" ];
-
     rr:subjectMap [
-
         rr:template "Person/{ID}/";
-
         rr:class foaf:Person;
-
     ];
-
-    
-
     rr:predicateObjectMap [
-
-
         rr:predicate foaf:name;
-
-
-        rr:objectMap [            
-
-
-            rr:template "{Nome}"; 
-
+        rr:objectMap [
+            rr:template "{Nome}";
             rr:termType rr:Literal;
-
         ];
-
-    ]; 
-	
-	rr:predicateObjectMap [
-
-
+    ];
+  	rr:predicateObjectMap [
         rr:predicate dbo:cpf;
-
-
-        rr:objectMap [            
-
-
-            rr:template "{CPF}"; 
-
+        rr:objectMap [
+            rr:template "{CPF}";
             rr:termType rr:Literal;
-
         ];
-
-    ]; 
-
+    ];
+    #join restricao VERIFICAR CORRETUDE
+    rr:predicateObjectMap [
+        rr:predicate foaf:Person;
+        rr:objectMap [
+            rr:parentTriplesMap <#Restricao>;
+            rr:joinCondition [
+                rr:child "rid";
+                rr:parent "rid";
+            ];
+        ];
+    #join prvenance VERIFICAR CORRETUDE
+    rr:predicateObjectMap [
+          rr:predicate foaf:Person;
+          rr:objectMap [
+              rr:parentTriplesMap <#Provenance>;
+                rr:joinCondition [
+                    rr:child "id";
+                    rr:parent "id";
+                ];
+          ];
+    ];
  .
 
 #mapeando restricao
-
 map:Restricao a rr:TriplesMap;
-
-    rr:logicalTable [ 
+    rr:logicalTable [
             rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
-
     rr:subjectMap [
-
         rr:template "Restricao/{rid}/";
-
         rr:class vocab:Restricao;
-
     ];
-
-    
-
     rr:predicateObjectMap [
-
-
         rr:predicate vocab:numProcess;
-
-
-        rr:objectMap [            
-
-
-            rr:template "{numProcess}"; 
-
-            rr:termType rr:Literal;
-
-        ];
-
-    ]; 
-	
-	rr:predicateObjectMap [
-
-        rr:predicate time:date;
-
-        rr:objectMap [            
-            rr:template "{date}"; 
+        rr:objectMap [
+            rr:template "{numProcess}";
             rr:termType rr:Literal;
         ];
-
-    ]; 
-	
-	
-	rr:predicateObjectMap [
-
-        rr:predicate vocab:tipoRestricao;
-
-        rr:objectMap [            
-            rr:template "{tipo_sancao}"; 
-            rr:termType rr:Literal;
-        ];
-
-    ]; 
+    ];
+  	rr:predicateObjectMap [
+          rr:predicate time:date;
+          rr:objectMap [
+              rr:template "{date}";
+              rr:termType rr:Literal;
+          ];
+      ];
+  	rr:predicateObjectMap [
+          rr:predicate vocab:tipoRestricao;
+          rr:objectMap [
+              rr:template "{tipo_sancao}";
+              rr:termType rr:Literal;
+          ];
+      ];
  .
 
 #mapeando provenance
 
 map:Provenance a rr:TriplesMap;
-
-    rr:logicalTable [ 
+    rr:logicalTable [
             rr:sqlQuery """SELECT * from provenance""" ];
-
     rr:subjectMap [
         rr:template "Provenance/{id}/";
         rr:class vocab:Provenance;
     ];
-
-	rr:predicateObjectMap [
-
+  	rr:predicateObjectMap [
         rr:predicate rdfs:label;
-
-        rr:objectMap [            
-            rr:template "{label}"; 
+        rr:objectMap [
+            rr:template "{label}";
             rr:termType rr:Literal;
         ];
-
     ];
-	
-	rr:predicateObjectMap [
-
+  	rr:predicateObjectMap [
         rr:predicate dbr:fileName;
-
-        rr:objectMap [            
-            rr:template "{filename}"; 
+        rr:objectMap [
+            rr:template "{filename}";
             rr:termType rr:Literal;
         ];
-
-    ]; 
-	
-	rr:predicateObjectMap [
-
+    ];
+  	rr:predicateObjectMap [
         rr:predicate time:date;
-
-        rr:objectMap [            
-            rr:template "{date}"; 
+        rr:objectMap [
+            rr:template "{date}";
             rr:termType rr:Literal;
         ];
-
-    ]; 
-	
-	rr:predicateObjectMap [
-
+    ];
+  	rr:predicateObjectMap [
         rr:predicate dc:source;
-
-        rr:objectMap [            
-            rr:template "{source}"; 
+        rr:objectMap [
+            rr:template "{source}";
             rr:termType rr:Literal;
         ];
-
-    ]; 
-	
-	rr:predicateObjectMap [
-
+    ];
+  	rr:predicateObjectMap [
         rr:predicate vocab:complement;
-
-        rr:objectMap [            
-            rr:template "{complement}"; 
+        rr:objectMap [
+            rr:template "{complement}";
             rr:termType rr:Literal;
         ];
-
-    ]; 
-   
+    ];
  .
-
