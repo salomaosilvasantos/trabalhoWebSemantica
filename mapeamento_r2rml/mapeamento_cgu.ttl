@@ -75,22 +75,36 @@ map:Restricao a rr:TriplesMap;
               rr:template "{date}";
               rr:termType rr:Literal;
           ];
-      ];
+    ];
   	rr:predicateObjectMap [
           rr:predicate vocab:tipoRestricao;
           rr:objectMap [
               rr:template "{tipo_sancao}";
               rr:termType rr:Literal;
           ];
-      ];
+    ];
+    rr:predicateObjectMap [
+          rr:predicate foaf:state;
+          rr:objectMap [
+              rr:template "{uf}";
+              rr:termType rr:Literal;
+          ];
+    ];
+    rr:predicateObjectMap [
+	      rr:predicate cgu:OrgaoSancionador;
+	      rr:objectMap [            
+	          rr:template "{orgaosancionador}"; 
+	          rr:termType rr:Literal;
+	      ];
+	];
  .
 
  #relacao entre as tabela pessoa e restricao
    map:Person_tem_restricao
 	rr:logicalTable [ rr:sqlQuery """
                 SELECT p.id as id_pessoa, r.rid as id_restricao
-		FROM pessoa_cgu_view p, restricao_cgu_view r
-		WHERE p.id= r.pessoa_id
+		        FROM pessoa_cgu_view p, restricao_cgu_view r
+		        WHERE p.id= r.pessoa_id
 	""" ];
 
 	rr:subjectMap [
@@ -117,6 +131,13 @@ map:Provenance a rr:TriplesMap;
     rr:subjectMap [
         rr:template "Provenance/{id}/";
         rr:class vocab:Provenance;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate rdf:id;
+        rr:objectMap [
+            rr:template "{id}";
+            rr:termType rr:Literal;
+        ];
     ];
   	rr:predicateObjectMap [
         rr:predicate rdfs:label;
