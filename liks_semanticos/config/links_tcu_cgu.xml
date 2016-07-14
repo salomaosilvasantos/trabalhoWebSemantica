@@ -57,7 +57,7 @@
         <Param name="format" value="N-TRIPLE"/>
       </Output>
       
-      <Output id="tcu_cgu" type="file" maxConfidence="0.90">
+      <Output id="tcu_cgu" type="file" minConfidence="0.90">
         <Param name="file" value="../results/review/tcu_cgu.nt"/>
         <Param name="format" value="N-TRIPLE"/>
       </Output>

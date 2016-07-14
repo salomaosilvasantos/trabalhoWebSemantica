@@ -1,0 +1,21 @@
+tcu->tse: 504
+
+review: 504
+530 : 13814 
+
+----------------------
+cgu->tcu: 51
+
+----------------------
+cgu->tse: 640 
+
+8776 : 13814 -> 640
+
+
+tcu:
+JOSE CARLOS DE SOUZA
+59381973172
+sameAS
+tse:
+JOSE CARLOS DE SOUZA
+18962041553
