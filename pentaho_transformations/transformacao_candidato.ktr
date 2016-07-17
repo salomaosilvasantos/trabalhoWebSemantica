@@ -76,14 +76,14 @@
   <notepads>
   </notepads>
   <connection>
-    <name>postgres_politico</name>
+    <name>Postgres jonas</name>
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>joao</database>
+    <database>Mashup</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2e4bb16bd64d980aac9</password>
+    <password>Encrypted 2be98afc86aa7f2e4cb79ce71da9fa6d4</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -101,9 +101,7 @@
   </connection>
   <order>
   <hop> <from>Select values nomear campos</from><to>Select values table candidato</to><enabled>Y</enabled> </hop>
-  <hop> <from>Select values nomear campos</from><to>Select values partido</to><enabled>N</enabled> </hop>
-  <hop> <from>Select values nomear campos</from><to>Select values 2 partido_candidato</to><enabled>Y</enabled> </hop>
-  <hop> <from>Select values 2 partido_candidato</from><to>Execute SQL script</to><enabled>Y</enabled> </hop>
+  <hop> <from>Select values nomear campos</from><to>Select values partido</to><enabled>Y</enabled> </hop>
   <hop> <from>Select values partido</from><to>Unique rows &#x28;HashSet&#x29;</to><enabled>Y</enabled> </hop>
   <hop> <from>Unique rows &#x28;HashSet&#x29;</from><to>table partido</to><enabled>Y</enabled> </hop>
   <hop> <from>Select values table candidato</from><to>Unique rows &#x28;HashSet&#x29; 2</to><enabled>Y</enabled> </hop>
@@ -111,45 +109,9 @@
   <hop> <from>Select values nomear campos</from><to>Select values eleicao</to><enabled>Y</enabled> </hop>
   <hop> <from>Select values eleicao</from><to>Unique rows &#x28;HashSet&#x29; 3</to><enabled>Y</enabled> </hop>
   <hop> <from>Unique rows &#x28;HashSet&#x29; 3</from><to>table eleicao</to><enabled>Y</enabled> </hop>
-  <hop> <from>Text file input 2</from><to>Select values</to><enabled>N</enabled> </hop>
-  <hop> <from>Select values</from><to>Select bens candidatos</to><enabled>N</enabled> </hop>
-  <hop> <from>Select bens candidatos</from><to>table bens</to><enabled>N</enabled> </hop>
   <hop> <from>Text file input 2 2 2</from><to>Select values nomear campos</to><enabled>Y</enabled> </hop>
+  <hop> <from>Text file input</from><to>table bens</to><enabled>Y</enabled> </hop>
   </order>
-  <step>
-    <name>Execute SQL script</name>
-    <type>ExecSQL</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>postgres_politico</connection>
-    <execute_each_row>Y</execute_each_row>
-    <single_statement>Y</single_statement>
-    <replace_variables>Y</replace_variables>
-    <quoteString>N</quoteString>
-    <sql>INSERT INTO partido_candidato&#x28;id_partido,id_candidato,despesa_max_campanha&#x29;&#xa;SELECT p.id as id_partido,c.id as id_candidato,12.1 from partido p, candidato c where c.cpf&#x3d;&#x27;&#x3f;&#x27; and p.nome&#x3d;&#x27;&#x3f;&#x27;</sql>
-    <set_params>N</set_params>
-    <insert_field/>
-    <update_field/>
-    <delete_field/>
-    <read_field/>
-    <arguments>
-       <argument><name>CPF_CANDIDATO</name></argument>
-       <argument><name>NOME_PARTIDO</name></argument>
-    </arguments>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>816</xloc>
-      <yloc>320</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
   <step>
     <name>Select bens candidatos</name>
     <type>SelectValues</type>
@@ -192,8 +154,8 @@
       </field>        <select_unspecified>N</select_unspecified>
     </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>592</xloc>
-      <yloc>480</yloc>
+      <xloc>752</xloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -260,40 +222,8 @@
       </field>        <select_unspecified>N</select_unspecified>
     </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>368</xloc>
-      <yloc>480</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Select values 2 partido_candidato</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>      <field>        <name>CPF_CANDIDATO</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>NOME_PARTIDO</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>DESPESA_MAX_CAMPANHA</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>        <select_unspecified>N</select_unspecified>
-    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>592</xloc>
-      <yloc>320</yloc>
+      <xloc>864</xloc>
+      <yloc>560</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -665,6 +595,30 @@
         <rename/>
         <length>-2</length>
         <precision>-2</precision>
+      </field>      <field>        <name>DESPESA_MAX_CAMPANHA</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>NUMERO_PARTIDO</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>CODIGO_LEGENDA</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>SIGLA_LEGENDA</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>COMPOSICAO_LEGENDA</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>NOME_LEGENDA</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
       </field>        <select_unspecified>N</select_unspecified>
     </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
@@ -675,7 +629,7 @@
     </step>
 
   <step>
-    <name>Text file input 2</name>
+    <name>Text file input</name>
     <type>TextFileInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -693,7 +647,7 @@
     <enclosure>&#x22;</enclosure>
     <enclosure_breaks>N</enclosure_breaks>
     <escapechar/>
-    <header>N</header>
+    <header>Y</header>
     <nr_headerlines>1</nr_headerlines>
     <footer>N</footer>
     <nr_footerlines>1</nr_footerlines>
@@ -709,10 +663,10 @@
     <rownumByFile>N</rownumByFile>
     <rownum_field/>
     <format>mixed</format>
-    <encoding>UTF-8</encoding>
+    <encoding>ISO-8859-1</encoding>
     <add_to_result_filenames>Y</add_to_result_filenames>
     <file>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;bem_candidato_2014&#x2f;bem_candidato_2014_SP.csv</name>
+      <name/>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -724,12 +678,12 @@
     </filters>
     <fields>
       <field>
-        <name>Field1</name>
-        <type>Date</type>
+        <name>data_geracao</name>
+        <type>String</type>
         <format>dd&#x2f;MM&#x2f;yyyy</format>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
         <nullif>-</nullif>
         <ifnull/>
         <position>-1</position>
@@ -739,12 +693,12 @@
         <repeat>N</repeat>
       </field>
       <field>
-        <name>Field2</name>
+        <name>hora_geracao</name>
         <type>String</type>
         <format/>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
         <nullif>-</nullif>
         <ifnull/>
         <position>-1</position>
@@ -754,115 +708,10 @@
         <repeat>N</repeat>
       </field>
       <field>
-        <name>Field3</name>
-        <type>Integer</type>
-        <format>&#x23;</format>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>15</length>
-        <precision>0</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field4</name>
-        <type>String</type>
-        <format/>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>20</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field5</name>
-        <type>String</type>
-        <format/>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>2</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field6</name>
-        <type>Integer</type>
-        <format>&#x23;</format>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>15</length>
-        <precision>0</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field7</name>
-        <type>Integer</type>
-        <format>&#x23;</format>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>15</length>
-        <precision>0</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field8</name>
-        <type>String</type>
-        <format/>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>60</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field9</name>
-        <type>String</type>
-        <format/>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
-        <nullif>-</nullif>
-        <ifnull/>
-        <position>-1</position>
-        <length>94</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>Field10</name>
+        <name>ano_eleicao</name>
         <type>Number</type>
-        <format>&#x23;.&#x23;</format>
-        <currency>R&#x24;</currency>
+        <format>&#x23;</format>
+        <currency>&#x24;</currency>
         <decimal>.</decimal>
         <group>,</group>
         <nullif>-</nullif>
@@ -874,12 +723,117 @@
         <repeat>N</repeat>
       </field>
       <field>
-        <name>Field11</name>
+        <name>descricao_eleicao</name>
+        <type>String</type>
+        <format/>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>20</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>sigla_uf</name>
+        <type>String</type>
+        <format/>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>2</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>sq_candidato</name>
+        <type>Integer</type>
+        <format>&#x23;</format>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>cd_tipo_bem_candidato</name>
+        <type>String</type>
+        <format>&#x23;</format>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>ds_tipo_bem_candidato</name>
+        <type>String</type>
+        <format/>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>76</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>detalhe_bem</name>
+        <type>String</type>
+        <format/>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>139</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>valor_bem</name>
+        <type>Number</type>
+        <format>&#x23;.&#x23;</format>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <nullif>-</nullif>
+        <ifnull/>
+        <position>-1</position>
+        <length>9</length>
+        <precision>2</precision>
+        <trim_type>none</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>data_ultima_atualizacao</name>
         <type>Date</type>
         <format>dd&#x2f;MM&#x2f;yyyy</format>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
         <nullif>-</nullif>
         <ifnull/>
         <position>-1</position>
@@ -889,12 +843,12 @@
         <repeat>N</repeat>
       </field>
       <field>
-        <name>Field12</name>
+        <name>hora_ultima_atualizacao</name>
         <type>String</type>
         <format/>
-        <currency>R&#x24;</currency>
-        <decimal>,</decimal>
-        <group>.</group>
+        <currency>&#x24;</currency>
+        <decimal>.</decimal>
+        <group>,</group>
         <nullif>-</nullif>
         <ifnull/>
         <position>-1</position>
@@ -920,7 +874,7 @@
     <line_number_files_destination_directory/>
     <line_number_files_extension>line</line_number_files_extension>
     <date_format_lenient>Y</date_format_lenient>
-    <date_format_locale>pt_BR</date_format_locale>
+    <date_format_locale>en_US</date_format_locale>
     <shortFileFieldName/>
     <pathFieldName/>
     <hiddenFieldName/>
@@ -931,372 +885,8 @@
     <sizeFieldName/>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>192</xloc>
+      <xloc>208</xloc>
       <yloc>480</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Unique rows &#x28;HashSet&#x29;</name>
-    <type>UniqueRowsByHashSet</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <store_values>Y</store_values>
-      <reject_duplicate_row>N</reject_duplicate_row>
-      <error_description/>
-    <fields>      <field>        <name>NUMERO_PARTIDO</name>
-        </field>      <field>        <name>NOME_PARTIDO</name>
-        </field>      <field>        <name>SIGLA_PARTIDO</name>
-        </field>      </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>816</xloc>
-      <yloc>224</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Unique rows &#x28;HashSet&#x29; 2</name>
-    <type>UniqueRowsByHashSet</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <store_values>Y</store_values>
-      <reject_duplicate_row>N</reject_duplicate_row>
-      <error_description/>
-    <fields>      <field>        <name>CPF_CANDIDATO</name>
-        </field>      </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>816</xloc>
-      <yloc>128</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Unique rows &#x28;HashSet&#x29; 3</name>
-    <type>UniqueRowsByHashSet</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <store_values>Y</store_values>
-      <reject_duplicate_row>N</reject_duplicate_row>
-      <error_description/>
-    <fields>      <field>        <name>SIGLA_UF</name>
-        </field>      <field>        <name>DESCRICAO_ELEICAO</name>
-        </field>      </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>832</xloc>
-      <yloc>400</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>table bens</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>postgres_politico</connection>
-    <schema/>
-    <table>bem_candidato</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>N</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-        <field>
-          <column_name>codigo</column_name>
-          <stream_name>CD_TIPO_BEM_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>tipo</column_name>
-          <stream_name>DS_TIPO_BEM_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>detalhe</column_name>
-          <stream_name>DETALHE_BEM</stream_name>
-        </field>
-        <field>
-          <column_name>valor</column_name>
-          <stream_name>VALOR_BEM</stream_name>
-        </field>
-        <field>
-          <column_name>data_atualizacao</column_name>
-          <stream_name>DATA_ULTIMA_ATUALIZACAO</stream_name>
-        </field>
-        <field>
-          <column_name>hora_atualizacao</column_name>
-          <stream_name>HORA_ULTIMA_ATUALIZACAO</stream_name>
-        </field>
-        <field>
-          <column_name>seguencial_cand</column_name>
-          <stream_name>SQ_CANDIDATO</stream_name>
-        </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>976</xloc>
-      <yloc>480</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>table candidato</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>postgres_politico</connection>
-    <schema>public</schema>
-    <table>candidato</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-        <field>
-          <column_name>nome_completo</column_name>
-          <stream_name>NOME_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>sequencial</column_name>
-          <stream_name>SEQUENCIAL_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>nome_urna</column_name>
-          <stream_name>NOME_URNA_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>cpf</column_name>
-          <stream_name>CPF_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>codigo_ocupacao</column_name>
-          <stream_name>CODIGO_OCUPACAO</stream_name>
-        </field>
-        <field>
-          <column_name>descricao_ocupacao</column_name>
-          <stream_name>DESCRICAO_OCUPACAO</stream_name>
-        </field>
-        <field>
-          <column_name>num_titulo_eleitoral</column_name>
-          <stream_name>NUM_TITULO_ELEITORAL_CANDIDATO</stream_name>
-        </field>
-        <field>
-          <column_name>codigo_sexo</column_name>
-          <stream_name>CODIGO_SEXO</stream_name>
-        </field>
-        <field>
-          <column_name>descricao_sexo</column_name>
-          <stream_name>DESCRICAO_SEXO</stream_name>
-        </field>
-        <field>
-          <column_name>cod_grau_instrucao</column_name>
-          <stream_name>COD_GRAU_INSTRUCAO</stream_name>
-        </field>
-        <field>
-          <column_name>descricao_grau_instrucao</column_name>
-          <stream_name>DESCRICAO_GRAU_INSTRUCAO</stream_name>
-        </field>
-        <field>
-          <column_name>codigo_estado_civil</column_name>
-          <stream_name>CODIGO_ESTADO_CIVIL</stream_name>
-        </field>
-        <field>
-          <column_name>descricao_estado_civil</column_name>
-          <stream_name>DESCRICAO_ESTADO_CIVIL</stream_name>
-        </field>
-        <field>
-          <column_name>codigo_nacionalidade</column_name>
-          <stream_name>CODIGO_NACIONALIDADE</stream_name>
-        </field>
-        <field>
-          <column_name>descricao_nacionalidade</column_name>
-          <stream_name>DESCRICAO_NACIONALIDADE</stream_name>
-        </field>
-        <field>
-          <column_name>sigla_uf_nascimento</column_name>
-          <stream_name>SIGLA_UF_NASCIMENTO</stream_name>
-        </field>
-        <field>
-          <column_name>codigo_municipio_nascimento</column_name>
-          <stream_name>CODIGO_MUNICIPIO_NASCIMENTO</stream_name>
-        </field>
-        <field>
-          <column_name>nome_municipio_nascimento</column_name>
-          <stream_name>NOME_MUNICIPIO_NASCIMENTO</stream_name>
-        </field>
-        <field>
-          <column_name>data_nascimento</column_name>
-          <stream_name>DATA_NASCIMENTO</stream_name>
-        </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>992</xloc>
-      <yloc>128</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>table eleicao</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>postgres_politico</connection>
-    <schema>public</schema>
-    <table>eleicao</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-        <field>
-          <column_name>ano</column_name>
-          <stream_name>ANO_ELEICAO</stream_name>
-        </field>
-        <field>
-          <column_name>numero_turno</column_name>
-          <stream_name>NUM_TURNO</stream_name>
-        </field>
-        <field>
-          <column_name>descricao</column_name>
-          <stream_name>DESCRICAO_ELEICAO</stream_name>
-        </field>
-        <field>
-          <column_name>sigla_uf</column_name>
-          <stream_name>SIGLA_UF</stream_name>
-        </field>
-        <field>
-          <column_name>sigla_ue</column_name>
-          <stream_name>SIGLA_UE</stream_name>
-        </field>
-        <field>
-          <column_name>descricao_ue</column_name>
-          <stream_name>DESCRICAO_UE</stream_name>
-        </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>992</xloc>
-      <yloc>400</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>table partido</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>postgres_politico</connection>
-    <schema/>
-    <table>partido</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-        <field>
-          <column_name>numero</column_name>
-          <stream_name>NUMERO_PARTIDO</stream_name>
-        </field>
-        <field>
-          <column_name>nome</column_name>
-          <stream_name>NOME_PARTIDO</stream_name>
-        </field>
-        <field>
-          <column_name>sigla</column_name>
-          <stream_name>SIGLA_PARTIDO</stream_name>
-        </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>992</xloc>
-      <yloc>224</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1339,147 +929,147 @@
     <encoding>UTF-8</encoding>
     <add_to_result_filenames>Y</add_to_result_filenames>
     <file>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AC.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AC.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AL.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AM.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AM.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AP.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AP.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_BA.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_BR.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_BR.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_CE.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_CE.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SP.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_DF.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_DF.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_ES.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_ES.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_GO.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_GO.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MA.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MA.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MG.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MG.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MS.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MT.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MT.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PA.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PA.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PB.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PB.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PE.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PE.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PI.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PI.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PR.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_PR.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RJ.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RJ.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SP.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RN.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RN.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RO.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RO.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RR.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RR.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RS.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_RS.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SC.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SC.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SE.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_TO.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SP.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_SE.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_TO.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_MS.csv</name>
+      <name/>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name>&#x2f;home&#x2f;salomao&#x2f;Documentos&#x2f;trabalho_web&#x2f;trabalho_final&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_BA.csv</name>
+      <name>&#x2f;Users&#x2f;jonaslima&#x2f;Documents&#x2f;Facul&#x2f;Web Sema&#x302;ntica&#x2f;trabalho_web_semantica&#x2f;input_data&#x2f;consulta_cand_2014&#x2f;consulta_cand_2014_AL.csv</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -2210,6 +1800,394 @@
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>112</xloc>
       <yloc>128</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Unique rows &#x28;HashSet&#x29;</name>
+    <type>UniqueRowsByHashSet</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <store_values>Y</store_values>
+      <reject_duplicate_row>N</reject_duplicate_row>
+      <error_description/>
+    <fields>      <field>        <name>NUMERO_PARTIDO</name>
+        </field>      <field>        <name>NOME_PARTIDO</name>
+        </field>      <field>        <name>SIGLA_PARTIDO</name>
+        </field>      </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>816</xloc>
+      <yloc>224</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Unique rows &#x28;HashSet&#x29; 2</name>
+    <type>UniqueRowsByHashSet</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <store_values>Y</store_values>
+      <reject_duplicate_row>N</reject_duplicate_row>
+      <error_description/>
+    <fields>      <field>        <name>CPF_CANDIDATO</name>
+        </field>      </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>816</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Unique rows &#x28;HashSet&#x29; 3</name>
+    <type>UniqueRowsByHashSet</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <store_values>Y</store_values>
+      <reject_duplicate_row>N</reject_duplicate_row>
+      <error_description/>
+    <fields>      <field>        <name>SIGLA_UF</name>
+        </field>      <field>        <name>DESCRICAO_ELEICAO</name>
+        </field>      </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>832</xloc>
+      <yloc>400</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>table bens</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>Postgres jonas</connection>
+    <schema/>
+    <table>bem_candidato</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>N</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>codigo</column_name>
+          <stream_name>cd_tipo_bem_candidato</stream_name>
+        </field>
+        <field>
+          <column_name>tipo</column_name>
+          <stream_name>ds_tipo_bem_candidato</stream_name>
+        </field>
+        <field>
+          <column_name>detalhe</column_name>
+          <stream_name>detalhe_bem</stream_name>
+        </field>
+        <field>
+          <column_name>valor</column_name>
+          <stream_name>valor_bem</stream_name>
+        </field>
+        <field>
+          <column_name>data_atualizacao</column_name>
+          <stream_name>data_ultima_atualizacao</stream_name>
+        </field>
+        <field>
+          <column_name>hora_atualizacao</column_name>
+          <stream_name>hora_ultima_atualizacao</stream_name>
+        </field>
+        <field>
+          <column_name>sequencial_cand</column_name>
+          <stream_name>sq_candidato</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>368</xloc>
+      <yloc>480</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>table candidato</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>Postgres jonas</connection>
+    <schema>public</schema>
+    <table>candidato</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>nome_completo</column_name>
+          <stream_name>NOME_CANDIDATO</stream_name>
+        </field>
+        <field>
+          <column_name>sequencial</column_name>
+          <stream_name>SEQUENCIAL_CANDIDATO</stream_name>
+        </field>
+        <field>
+          <column_name>nome_urna</column_name>
+          <stream_name>NOME_URNA_CANDIDATO</stream_name>
+        </field>
+        <field>
+          <column_name>cpf</column_name>
+          <stream_name>CPF_CANDIDATO</stream_name>
+        </field>
+        <field>
+          <column_name>codigo_ocupacao</column_name>
+          <stream_name>CODIGO_OCUPACAO</stream_name>
+        </field>
+        <field>
+          <column_name>descricao_ocupacao</column_name>
+          <stream_name>DESCRICAO_OCUPACAO</stream_name>
+        </field>
+        <field>
+          <column_name>num_titulo_eleitoral</column_name>
+          <stream_name>NUM_TITULO_ELEITORAL_CANDIDATO</stream_name>
+        </field>
+        <field>
+          <column_name>codigo_sexo</column_name>
+          <stream_name>CODIGO_SEXO</stream_name>
+        </field>
+        <field>
+          <column_name>descricao_sexo</column_name>
+          <stream_name>DESCRICAO_SEXO</stream_name>
+        </field>
+        <field>
+          <column_name>cod_grau_instrucao</column_name>
+          <stream_name>COD_GRAU_INSTRUCAO</stream_name>
+        </field>
+        <field>
+          <column_name>descricao_grau_instrucao</column_name>
+          <stream_name>DESCRICAO_GRAU_INSTRUCAO</stream_name>
+        </field>
+        <field>
+          <column_name>codigo_estado_civil</column_name>
+          <stream_name>CODIGO_ESTADO_CIVIL</stream_name>
+        </field>
+        <field>
+          <column_name>descricao_estado_civil</column_name>
+          <stream_name>DESCRICAO_ESTADO_CIVIL</stream_name>
+        </field>
+        <field>
+          <column_name>codigo_nacionalidade</column_name>
+          <stream_name>CODIGO_NACIONALIDADE</stream_name>
+        </field>
+        <field>
+          <column_name>descricao_nacionalidade</column_name>
+          <stream_name>DESCRICAO_NACIONALIDADE</stream_name>
+        </field>
+        <field>
+          <column_name>sigla_uf_nascimento</column_name>
+          <stream_name>SIGLA_UF_NASCIMENTO</stream_name>
+        </field>
+        <field>
+          <column_name>codigo_municipio_nascimento</column_name>
+          <stream_name>CODIGO_MUNICIPIO_NASCIMENTO</stream_name>
+        </field>
+        <field>
+          <column_name>nome_municipio_nascimento</column_name>
+          <stream_name>NOME_MUNICIPIO_NASCIMENTO</stream_name>
+        </field>
+        <field>
+          <column_name>data_nascimento</column_name>
+          <stream_name>DATA_NASCIMENTO</stream_name>
+        </field>
+        <field>
+          <column_name>despesa_max_campanha</column_name>
+          <stream_name>DESPESA_MAX_CAMPANHA</stream_name>
+        </field>
+        <field>
+          <column_name>numero_partido</column_name>
+          <stream_name>NUMERO_PARTIDO</stream_name>
+        </field>
+        <field>
+          <column_name>codigo_legenda</column_name>
+          <stream_name>CODIGO_LEGENDA</stream_name>
+        </field>
+        <field>
+          <column_name>sigla_legenda</column_name>
+          <stream_name>SIGLA_LEGENDA</stream_name>
+        </field>
+        <field>
+          <column_name>composicao_legenda</column_name>
+          <stream_name>COMPOSICAO_LEGENDA</stream_name>
+        </field>
+        <field>
+          <column_name>nome_legenda</column_name>
+          <stream_name>NOME_LEGENDA</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>992</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>table eleicao</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>Postgres jonas</connection>
+    <schema>public</schema>
+    <table>eleicao</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>ano</column_name>
+          <stream_name>ANO_ELEICAO</stream_name>
+        </field>
+        <field>
+          <column_name>numero_turno</column_name>
+          <stream_name>NUM_TURNO</stream_name>
+        </field>
+        <field>
+          <column_name>descricao</column_name>
+          <stream_name>DESCRICAO_ELEICAO</stream_name>
+        </field>
+        <field>
+          <column_name>sigla_uf</column_name>
+          <stream_name>SIGLA_UF</stream_name>
+        </field>
+        <field>
+          <column_name>sigla_ue</column_name>
+          <stream_name>SIGLA_UE</stream_name>
+        </field>
+        <field>
+          <column_name>descricao_ue</column_name>
+          <stream_name>DESCRICAO_UE</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>992</xloc>
+      <yloc>400</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>table partido</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>Postgres jonas</connection>
+    <schema/>
+    <table>partido</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>numero</column_name>
+          <stream_name>NUMERO_PARTIDO</stream_name>
+        </field>
+        <field>
+          <column_name>nome</column_name>
+          <stream_name>NOME_PARTIDO</stream_name>
+        </field>
+        <field>
+          <column_name>sigla</column_name>
+          <stream_name>SIGLA_PARTIDO</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>992</xloc>
+      <yloc>224</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
