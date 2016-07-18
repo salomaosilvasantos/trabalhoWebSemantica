@@ -21,7 +21,7 @@
     rr:logicalTable [
             rr:sqlQuery """SELECT * from pessoa_cgu_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/cgu/RestringidoPessoa/{ID}/";
+        rr:template "http://arida.ufc.br/cgu/RestringidoPessoa/{ID}";
         rr:class foaf:Person;
     ];
     rr:predicateObjectMap [

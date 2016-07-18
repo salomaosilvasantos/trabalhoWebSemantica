@@ -4,9 +4,9 @@
     </Prefixes>
         <DataSources>
           <Dataset id="cgu" type="file">
-            <Param name="file" value="../input/saida_cgu_140716.nt"/><Param name="format" value="n-triple"/><Param name="graph" value=""/>
+            <Param name="file" value="saida_tcu_140716.nt"/><Param name="format" value="n-triple"/><Param name="graph" value=""/>
           </Dataset><Dataset id="tcu" type="file">
-            <Param name="file" value="../input/saida_tcu_140716.nt"/><Param name="format" value="n-triple"/><Param name="graph" value=""/>
+            <Param name="file" value="saida_cgu_140716.nt"/><Param name="format" value="n-triple"/><Param name="graph" value=""/>
           </Dataset>
         </DataSources>
         <Interlinks>
@@ -26,13 +26,16 @@
             <Compare id="qGrams1" required="false" weight="1" metric="qGrams" threshold="0.0" indexing="true">
             <Input id="sourcePath1" path="/&lt;http://dbpedia.org/resource/cpf&gt;"/><Input id="targetPath1" path="/&lt;http://dbpedia.org/resource/cpf&gt;"/><Param name="q" value="2"/><Param name="minChar" value="0"/><Param name="maxChar" value="z"/>
           </Compare><Compare id="qGrams2" required="false" weight="1" metric="qGrams" threshold="0.0" indexing="true">
+            
             <TransformInput id="lowerCase1" function="lowerCase">
-            <TransformInput id="normalizeChars1" function="normalizeChars">
-            <Input id="sourcePath2" path="/foaf:name"/>
+              <TransformInput id="normalizeChars1" function="normalizeChars">
+              <Input id="sourcePath2" path="/foaf:name"/>
             
-          </TransformInput>
+              </TransformInput>
             
-          </TransformInput><TransformInput id="lowerCase2" function="lowerCase">
+            </TransformInput>
+
+          <TransformInput id="lowerCase2" function="lowerCase">
             <TransformInput id="normalizeChars2" function="normalizeChars">
             <Input id="targetPath2" path="/foaf:name"/>
             
@@ -52,14 +55,6 @@
           
         </Transforms>
         <Outputs>
-          <Output id="tcu_cgu" type="file" minConfidence="1.0">
-        <Param name="file" value="../results/tcu_cgu_140716.nt"/>
-        <Param name="format" value="N-TRIPLE"/>
-      </Output>
-      
-      <Output id="tcu_cgu" type="file" minConfidence="0.90">
-        <Param name="file" value="../results/review/tcu_cgu_140716.nt"/>
-        <Param name="format" value="N-TRIPLE"/>
-      </Output>
+          
         </Outputs>
       </Silk>
