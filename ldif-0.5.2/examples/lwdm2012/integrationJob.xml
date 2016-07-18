@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<integrationJob xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://www4.wiwiss.fu-berlin.de/ldif/ ../xsd/IntegrationJob.xsd"
+                xmlns="http://www4.wiwiss.fu-berlin.de/ldif/">
+    <properties>integration.properties</properties>
+    <sources>
+        <source>dumps</source>
+    </sources>
+    <!--linkSpecifications>linkspecs</linkSpecifications>
+    <mappings>mappings</mappings-->
+    <sieve>sieve</sieve>
+    <outputs>
+        <output>
+            <file>integrated_cities.nq</file>
+        </output>
+
+        <!-- Virtuoso -->
+        <!--output>
+            <sparql>
+                <endpointURI>http://host:8890/sparql/</endpointURI>
+                <queryParameter>query</queryParameter>
+                <sparqlVersion>1.0</sparqlVersion>
+                <useDirectPost>false</useDirectPost>
+            </sparql>
+        </output-->
+
+        <!-- Jena: java -jar fuseki-server.jar \-\-update \-\-loc /data/tdb-sieve /sieve -->
+        <output>
+            <sparql>
+                <endpointURI>http://localhost:3030/sieve/update</endpointURI>
+                <sparqlVersion>1.1</sparqlVersion>
+                <useDirectPost>true</useDirectPost>
+            </sparql>
+        </output>
+    </outputs>
+    <runSchedule>onStartup</runSchedule>
+</integrationJob>
