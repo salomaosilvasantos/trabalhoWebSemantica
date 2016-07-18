@@ -1,9 +1,7 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix tse: <http://arida.ufc.br/tse/> .
+@prefix tse: <http://arida.ufc.br/vocab/tse/> .
 @prefix map: <#> .
 @prefix map: <http://example/> .
-@prefix vocab: <http://rdf.ontology2.com/vocab#> .
-
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -63,7 +61,7 @@ map:Restricao a rr:TriplesMap;
         ];
     ];
     rr:predicateObjectMap [
-        rr:predicate vocab:numProcess;
+        rr:predicate tse:numProcess;
 	rr:objectMap [
 	    rr:template "{numProcess}";
             rr:termType rr:Literal;
@@ -108,7 +106,7 @@ map:Restricao a rr:TriplesMap;
 	       """ ];
 	       rr:subjectMap [
 		            rr:template 'http://arida.ufc.br/tse/RestringidoPessoa/{"id_pessoa"}';
-		            rr:class foaf:Person;
+		            #rr:class foaf:Person;
 	       ];
 	       rr:predicateObjectMap [
 		            rr:predicate tse:temRestricao;
@@ -128,7 +126,7 @@ map:Restricao a rr:TriplesMap;
             rr:sqlQuery """SELECT * from provenance""" ];
     rr:subjectMap [
         rr:template "http://arida.ufc.br/tse/Provenance/{id}";
-        rr:class vocab:Provenance;
+        rr:class tse:Provenance;
     ];
   	rr:predicateObjectMap [
           rr:predicate rdfs:label;
@@ -159,7 +157,7 @@ map:Restricao a rr:TriplesMap;
           ];
     ];
   	rr:predicateObjectMap [
-          rr:predicate vocab:complement;
+          rr:predicate tse:complement;
           rr:objectMap [
               rr:template "{complement}";
               rr:termType rr:Literal;
@@ -175,8 +173,8 @@ map:Restricao a rr:TriplesMap;
 		          WHERE r.provenance_id= p.id
 	      """ ];
 	      rr:subjectMap [
-		           rr:template 'http://arida.ufc.br/tse/restricao/{"id_restricao"}';
-		           rr:class tse:Restricao;
+		           rr:template 'http://arida.ufc.br/tse/Restricao/{"id_restricao"}';
+		           #rr:class tse:Restricao;
 	      ];
 	      rr:predicateObjectMap [
 		          rr:predicate tse:temProvenance;
@@ -221,8 +219,8 @@ map:Restricao a rr:TriplesMap;
   		            WHERE res.restritor_id=r.id
   	     """ ];
   	     rr:subjectMap [
-  		        rr:template 'http://arida.ufc.br/tse/restricao/{"restricao_id"}';
-  		        rr:class tse:Restricao;
+  		        rr:template 'http://arida.ufc.br/tse/Restricao/{"restricao_id"}';
+  		        #rr:class tse:Restricao;
   	     ];
   	     rr:predicateObjectMap [
   		       rr:predicate tse:temRestritor;

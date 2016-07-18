@@ -1,8 +1,6 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix cgu: <http://arida.ufc.br/cgu/> .
+@prefix cgu: <http://arida.ufc.br/vocab/cgu/> .
 @prefix map: <#> .
-@prefix vocab: <http://rdf.ontology2.com/vocab#> .
-
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -53,7 +51,7 @@ map:Restricao a rr:TriplesMap;
             rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
     rr:subjectMap [
         rr:template "http://arida.ufc.br/cgu/Restricao/{rid}";
-        rr:class vocab:Restricao;
+        rr:class cgu:Restricao;
     ];
     rr:predicateObjectMap [
         rr:predicate rdf:id;
@@ -63,7 +61,7 @@ map:Restricao a rr:TriplesMap;
         ];
     ];
     rr:predicateObjectMap [
-        rr:predicate vocab:numProcess;
+        rr:predicate cgu:numProcess;
         rr:objectMap [
             rr:template "{numprocess}";
             rr:termType rr:Literal;
@@ -77,7 +75,7 @@ map:Restricao a rr:TriplesMap;
           ];
     ];
   	rr:predicateObjectMap [
-          rr:predicate vocab:tipoRestricao;
+          rr:predicate cgu:tipoRestricao;
           rr:objectMap [
               rr:template "{tipo_sancao}";
               rr:termType rr:Literal;
@@ -130,7 +128,7 @@ map:Provenance a rr:TriplesMap;
             rr:sqlQuery """SELECT * from provenance""" ];
     rr:subjectMap [
         rr:template "Provenance/{id}/";
-        rr:class vocab:Provenance;
+        rr:class cgu:Provenance;
     ];
     rr:predicateObjectMap [
         rr:predicate rdf:id;
@@ -168,7 +166,7 @@ map:Provenance a rr:TriplesMap;
         ];
     ];
   	rr:predicateObjectMap [
-        rr:predicate vocab:complement;
+        rr:predicate cgu:complement;
         rr:objectMap [
             rr:template "{complement}";
             rr:termType rr:Literal;
@@ -185,7 +183,7 @@ map:Provenance a rr:TriplesMap;
 	               """ ];
        rr:subjectMap [
 		          rr:template 'http://arida.ufc.br/cgu/restricao/{"id_restricao"}';
-		          rr:class cgu:Restricao;
+		          #rr:class cgu:Restricao;
 	     ];
 	     rr:predicateObjectMap [
 		          rr:predicate cgu:temProvenance;
@@ -231,7 +229,7 @@ map:Provenance a rr:TriplesMap;
     """ ];
     rr:subjectMap [
     		    rr:template 'http://arida.ufc.br/cgu/restricao/{"restricao_id"}';
-    		    rr:class cgu:Restricao;
+    		    #rr:class cgu:Restricao;
     ];
     rr:predicateObjectMap [
     		    rr:predicate cgu:temRestritor;

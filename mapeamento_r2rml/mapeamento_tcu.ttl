@@ -1,8 +1,6 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix tcu: <http://arida.ufc.br/tcu/> .
+@prefix tcu: <http://arida.ufc.br/vocab/tcu/> .
 @prefix map: <#> .
-@prefix vocab: <http://rdf.ontology2.com/vocab#> .
-
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -102,7 +100,7 @@
 
 	rr:subjectMap [
 		rr:template 'http://arida.ufc.br/tcu/RestringidoPessoa/{"id_pessoa"}';
-		rr:class foaf:Person; 
+		#rr:class foaf:Person; 
 	];
 
 	rr:predicateObjectMap [ 
@@ -160,7 +158,7 @@
         ];
     ]; 
     rr:predicateObjectMap [
-        rr:predicate vocab:complement;
+        rr:predicate tcu:complement;
         rr:objectMap [            
             rr:template "{complement}"; 
             rr:termType rr:Literal;
@@ -176,8 +174,8 @@
 	""" ];
 
 	rr:subjectMap [
-		rr:template 'http://arida.ufc.br/tcu/restricao/{"id_restricao"}';
-		rr:class tcu:Restricao; 
+		rr:template 'http://arida.ufc.br/tcu/Restricao/{"id_restricao"}';
+		#rr:class tcu:Restricao; 
 	];
 
 	rr:predicateObjectMap [ 
@@ -223,8 +221,8 @@
 		WHERE res.restritor_id=r.id
 	""" ];
 	rr:subjectMap [
-		rr:template 'http://arida.ufc.br/tcu/restricao/{"restricao_id"}';
-		rr:class tcu:Restricao; 
+		rr:template 'http://arida.ufc.br/tcu/Restricao/{"restricao_id"}';
+		#rr:class tcu:Restricao; 
 	];
 
 	rr:predicateObjectMap [ 
