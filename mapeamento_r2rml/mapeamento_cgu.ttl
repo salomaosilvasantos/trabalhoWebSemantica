@@ -52,7 +52,7 @@ map:Restricao a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/cgu/Restricao/{rid}/";
+        rr:template "http://arida.ufc.br/cgu/Restricao/{rid}";
         rr:class vocab:Restricao;
     ];
     rr:predicateObjectMap [
@@ -203,7 +203,7 @@ map:Provenance a rr:TriplesMap;
         rr:logicalTable [
                   rr:sqlQuery """SELECT * from restritor""" ];
         rr:subjectMap [
-            rr:template "http://arida.ufc.br/cgu/Restritor/{id}/";
+            rr:template "http://arida.ufc.br/cgu/Restritor/{id}";
             rr:class cgu:Restritor;
         ];
         rr:predicateObjectMap [

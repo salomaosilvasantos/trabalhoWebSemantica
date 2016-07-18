@@ -196,7 +196,7 @@
     rr:logicalTable [ 
             rr:sqlQuery """SELECT * from restritor""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/tcu/Restritor/{id}/";
+        rr:template "http://arida.ufc.br/tcu/Restritor/{id}";
         rr:class tcu:Restritor;
     ];
     rr:predicateObjectMap [
