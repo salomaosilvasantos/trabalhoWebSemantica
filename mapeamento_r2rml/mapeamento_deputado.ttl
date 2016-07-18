@@ -19,7 +19,7 @@ map:Deputado a rr:TriplesMap;
 	rr:logicalTable [
         	rr:sqlQuery """select * from deputado_view""" ];
 	rr:subjectMap [
-    		rr:template "Deputado/{ID}/";
+    		rr:template "http://arida.ufc.br/Deputado/{ID}/";
 		rr:class foaf:Person;
 	];
 	rr:predicateObjectMap [
@@ -50,7 +50,7 @@ map:Partido a rr:TriplesMap;
 	rr:logicalTable [
         	rr:sqlQuery """select * from partido_view""" ];
 	rr:subjectMap [
-    		rr:template "Partido/{ID}/";
+    		rr:template "http://arida.ufc.br/Partido/{ID}/";
 		rr:class vocab:Partido;
 	];
 	rr:predicateObjectMap [
