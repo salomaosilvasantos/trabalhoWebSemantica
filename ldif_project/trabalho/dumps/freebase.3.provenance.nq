@@ -1,0 +1,7 @@
+_:freebase2E3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www4.wiwiss.fu-berlin.de/ldif/ImportJob> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:freebase2E3 <http://www4.wiwiss.fu-berlin.de/ldif/importId> "freebase.3" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:freebase2E3 <http://www4.wiwiss.fu-berlin.de/ldif/lastUpdate> "2016-07-18T09:26:09-03:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:freebase2E3 <http://www4.wiwiss.fu-berlin.de/ldif/hasDatasource> "Freebase" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:freebase2E3 <http://www4.wiwiss.fu-berlin.de/ldif/hasImportType> "crawl" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:freebase2E3 <http://www4.wiwiss.fu-berlin.de/ldif/hasOriginalLocation> "" <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .
+_:freebase2E3 <http://www4.wiwiss.fu-berlin.de/ldif/numberOfQuads> "7"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> <http://www4.wiwiss.fu-berlin.de/ldif/provenance> .

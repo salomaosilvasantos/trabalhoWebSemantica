@@ -61,7 +61,7 @@ map:Restricao a rr:TriplesMap;
         ];
     ];
     rr:predicateObjectMap [
-        rr:predicate tse:numProcess;
+        rr:predicate tse:numeroProcesso;
 	rr:objectMap [
 	    rr:template "{numProcess}";
             rr:termType rr:Literal;

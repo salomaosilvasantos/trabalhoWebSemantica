@@ -60,7 +60,7 @@
         ];
     ];
     rr:predicateObjectMap [
-	rr:predicate tcu:numeroProcess;
+	rr:predicate tcu:numeroProcesso;
 	rr:objectMap [            
 	    rr:template "{numProcess}"; 
 	    rr:termType rr:Literal;

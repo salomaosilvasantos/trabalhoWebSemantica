@@ -61,7 +61,7 @@ map:Restricao a rr:TriplesMap;
         ];
     ];
     rr:predicateObjectMap [
-        rr:predicate cgu:numProcess;
+        rr:predicate cgu:numeroProcesso;
         rr:objectMap [
             rr:template "{numprocess}";
             rr:termType rr:Literal;
@@ -85,6 +85,14 @@ map:Restricao a rr:TriplesMap;
 	      rr:predicate cgu:OrgaoSancionador;
 	      rr:objectMap [            
 	          rr:template "{orgaosancionador}"; 
+	          rr:termType rr:Literal;
+	      ];
+	];
+	
+	rr:predicateObjectMap [
+	      rr:predicate cgu:tipoSancao;
+	      rr:objectMap [            
+	          rr:template "{tipo_sancao}"; 
 	          rr:termType rr:Literal;
 	      ];
 	];
