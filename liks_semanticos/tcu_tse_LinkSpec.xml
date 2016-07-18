@@ -12,7 +12,7 @@
 
     <Interlinks>
 
-        <Interlink id="comparacao_tcu_cgu">
+        <Interlink id="comparacao_tse_tcu">
             <LinkType>owl:sameAs</LinkType>
 
             <SourceDataset dataSource="SOURCE" var="a">
@@ -39,14 +39,14 @@
                 </Compare>
                 <Compare metric="levenshteinDistance">
                     <TransformInput id="lowerCase1" function="lowerCase">
-                        <TransformInput id="normalizeChars1" function="normalizeChars">
+                    <!--    <TransformInput id="normalizeChars1" function="normalizeChars"> -->
                         <Input id="sourcePath2" path="?a/foaf:name"/>
-                        </TransformInput>
+                        <!-- </TransformInput> -->
                     </TransformInput>
                     <TransformInput id="lowerCase2" function="lowerCase">
-                        <TransformInput id="normalizeChars2" function="normalizeChars">
+                    <!--    <TransformInput id="normalizeChars2" function="normalizeChars"> -->
                         <Input id="targetPath2" path="?b/foaf:name"/>
-                        </TransformInput>
+                    <!--    </TransformInput> -->
                     </TransformInput>
                 </Compare>
                 </Aggregate>
