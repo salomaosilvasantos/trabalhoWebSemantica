@@ -1,4 +1,5 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vocab: <http://arida.ufc.br/vocab/> .
 @prefix map: <#> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -13,18 +14,18 @@
 @prefix time: <http://www.w3.org/TR/owl-time/>.
 
 
-map:Person a rr:TriplesMap;
+map:Deputado a rr:TriplesMap;
 
 	rr:logicalTable [
         	rr:sqlQuery """select * from deputado_view""" ];
 	rr:subjectMap [
-    		rr:template "Person/{ID}/";
+    		rr:template "Deputado/{ID}/";
 		rr:class foaf:Person;
 	];
 	rr:predicateObjectMap [
         	rr:predicate foaf:name;
         	rr:objectMap [
-            		rr:template "{Nome}";
+            		rr:template "{Nome_completo}";
             		rr:termType rr:Literal;
         	];
     	];
@@ -43,3 +44,51 @@ map:Person a rr:TriplesMap;
         	];
     	];
 .
+
+map:Partido a rr:TriplesMap;
+
+	rr:logicalTable [
+        	rr:sqlQuery """select * from partido_view""" ];
+	rr:subjectMap [
+    		rr:template "Partido/{ID}/";
+		rr:class vocab:Partido;
+	];
+	rr:predicateObjectMap [
+        	rr:predicate rdfs:label;
+        	rr:objectMap [
+            		rr:template "{Nome}";
+            		rr:termType rr:Literal;
+        	];
+    	];
+  	rr:predicateObjectMap [
+        	rr:predicate rdf:id;
+        	rr:objectMap [
+            		rr:template "{id}";
+            		rr:termType rr:Literal;
+        	];
+    	];
+.
+
+ #relacao entre as tabela deputado tem partido
+   map:Deputado_tem_partido
+	rr:logicalTable [ rr:sqlQuery """
+                SELECT deputado_id as id_deputado, partido_id as id_partido
+		        FROM deputado_partido
+	""" ];
+
+	rr:subjectMap [
+		rr:template 'http://arida.ufc.br/Deputado/{"id_deputado"}';
+		#rr:class foaf:Person;
+	];
+
+	rr:predicateObjectMap [
+		rr:predicate vocab:temParty;
+		rr:objectMap [
+			rr:parentTriplesMap map:Partido;
+			rr:joinCondition[
+				rr:child 'id_partido';
+				rr:parent 'id';
+			]
+		]
+	].
+
