@@ -1,5 +1,5 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix tse: <http://arida.ufc.br/vocab/tse/> .
+@prefix tse: <http://arida.ufc.br/vocab/resource/tse/> .
 @prefix map: <#> .
 @prefix map: <http://example/> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
@@ -19,7 +19,7 @@ map:Person a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from pessoa_tse_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/tse/RestringidoPessoa/{ID}";
+        rr:template "http://arida.ufc.br/tse/restringidopessoa/{ID}";
         rr:class foaf:Person;
     ];
     rr:predicateObjectMap [
@@ -50,7 +50,7 @@ map:Restricao a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from restricao_tse_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/tse/Restricao/{rid}";
+        rr:template "http://arida.ufc.br/tse/restricao/{rid}";
         rr:class foaf:Restricao;
     ];
     rr:predicateObjectMap [
@@ -105,7 +105,7 @@ map:Restricao a rr:TriplesMap;
 		             WHERE p.id= r.pessoa_id
 	       """ ];
 	       rr:subjectMap [
-		            rr:template 'http://arida.ufc.br/tse/RestringidoPessoa/{"id_pessoa"}';
+		            rr:template 'http://arida.ufc.br/tse/restringidopessoa/{"id_pessoa"}';
 		            #rr:class foaf:Person;
 	       ];
 	       rr:predicateObjectMap [
@@ -125,7 +125,7 @@ map:Restricao a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from provenance""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/tse/Provenance/{id}";
+        rr:template "http://arida.ufc.br/tse/provenance/{id}";
         rr:class tse:Provenance;
     ];
   	rr:predicateObjectMap [
@@ -173,7 +173,7 @@ map:Restricao a rr:TriplesMap;
 		          WHERE r.provenance_id= p.id
 	      """ ];
 	      rr:subjectMap [
-		           rr:template 'http://arida.ufc.br/tse/Restricao/{"id_restricao"}';
+		           rr:template 'http://arida.ufc.br/tse/restricao/{"id_restricao"}';
 		           #rr:class tse:Restricao;
 	      ];
 	      rr:predicateObjectMap [
@@ -192,7 +192,7 @@ map:Restricao a rr:TriplesMap;
         rr:logicalTable [
                 rr:sqlQuery """SELECT * from restritor""" ];
         rr:subjectMap [
-              rr:template "http://arida.ufc.br/tse/Restritor/{id}";
+              rr:template "http://arida.ufc.br/tse/restritor/{id}";
               rr:class tse:Restritor;
         ];
         rr:predicateObjectMap [
@@ -219,7 +219,7 @@ map:Restricao a rr:TriplesMap;
   		            WHERE res.restritor_id=r.id
   	     """ ];
   	     rr:subjectMap [
-  		        rr:template 'http://arida.ufc.br/tse/Restricao/{"restricao_id"}';
+  		        rr:template 'http://arida.ufc.br/tse/restricao/{"restricao_id"}';
   		        #rr:class tse:Restricao;
   	     ];
   	     rr:predicateObjectMap [

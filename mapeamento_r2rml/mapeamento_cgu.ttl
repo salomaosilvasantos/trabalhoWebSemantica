@@ -1,5 +1,5 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix cgu: <http://arida.ufc.br/vocab/cgu/> .
+@prefix cgu: <http://arida.ufc.br/vocab/resource/cgu/> .
 @prefix map: <#> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -19,7 +19,7 @@
     rr:logicalTable [
             rr:sqlQuery """SELECT * from pessoa_cgu_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/cgu/RestringidoPessoa/{ID}";
+        rr:template "http://arida.ufc.br/cgu/restringidopessoa/{ID}";
         rr:class foaf:Person;
     ];
     rr:predicateObjectMap [
@@ -50,13 +50,13 @@ map:Restricao a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/cgu/Restricao/{rid}";
+        rr:template "http://arida.ufc.br/cgu/restricao/{id_poderoso}";
         rr:class cgu:Restricao;
     ];
     rr:predicateObjectMap [
         rr:predicate rdf:id;
         rr:objectMap [
-            rr:template "{rid}";
+            rr:template "{id_poderoso}";
             rr:termType rr:Literal;
         ];
     ];
@@ -71,13 +71,6 @@ map:Restricao a rr:TriplesMap;
           rr:predicate time:date;
           rr:objectMap [
               rr:template "{date}";
-              rr:termType rr:Literal;
-          ];
-    ];
-  	rr:predicateObjectMap [
-          rr:predicate cgu:tipoRestricao;
-          rr:objectMap [
-              rr:template "{tipo_sancao}";
               rr:termType rr:Literal;
           ];
     ];
@@ -100,13 +93,13 @@ map:Restricao a rr:TriplesMap;
  #relacao entre as tabela pessoa e restricao
    map:Person_tem_restricao
 	rr:logicalTable [ rr:sqlQuery """
-                SELECT p.id as id_pessoa, r.rid as id_restricao
+                SELECT p.id as id_pessoa, r.id_poderoso as id_restricao
 		        FROM pessoa_cgu_view p, restricao_cgu_view r
 		        WHERE p.id= r.pessoa_id
 	""" ];
 
 	rr:subjectMap [
-		rr:template 'http://arida.ufc.br/cgu/RestringidoPessoa/{"id_pessoa"}';
+		rr:template 'http://arida.ufc.br/cgu/restringidopessoa/{"id_pessoa"}';
 		#rr:class foaf:Person;
 	];
 
@@ -116,7 +109,7 @@ map:Restricao a rr:TriplesMap;
 			rr:parentTriplesMap map:Restricao;
 			rr:joinCondition[
 				rr:child 'id_restricao';
-				rr:parent 'rid';
+				rr:parent 'id_poderoso';
 			]
 		]
 	].
@@ -127,7 +120,7 @@ map:Provenance a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from provenance""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/cgu/Provenance/{id}/";
+        rr:template "http://arida.ufc.br/cgu/provenance/{id}";
         rr:class cgu:Provenance;
     ];
     rr:predicateObjectMap [
@@ -177,12 +170,12 @@ map:Provenance a rr:TriplesMap;
 #relacao entre as tabela restricao e provenance
    map:Restritor_tem_provenance
 	     rr:logicalTable [ rr:sqlQuery """
-                SELECT r.rid as id_restricao, p.id as id_provenance
+                SELECT r.id_poderoso as id_restricao, p.id as id_provenance
 		            FROM restricao_cgu_view r, provenance p
 		            WHERE r.provenance_id= p.id
 	               """ ];
        rr:subjectMap [
-		          rr:template 'http://arida.ufc.br/cgu/Restricao/{"id_restricao"}';
+		          rr:template 'http://arida.ufc.br/cgu/restricao/{"id_restricao"}';
 		          #rr:class cgu:Restricao;
 	     ];
 	     rr:predicateObjectMap [
@@ -201,7 +194,7 @@ map:Provenance a rr:TriplesMap;
         rr:logicalTable [
                   rr:sqlQuery """SELECT * from restritor""" ];
         rr:subjectMap [
-            rr:template "http://arida.ufc.br/cgu/Restritor/{id}";
+            rr:template "http://arida.ufc.br/cgu/restritor/{id}";
             rr:class cgu:Restritor;
         ];
         rr:predicateObjectMap [
@@ -223,12 +216,12 @@ map:Provenance a rr:TriplesMap;
 #relacao entre as tabela restricao e restritor
     map:restricao_tem_restritor
     rr:logicalTable [ rr:sqlQuery """
-            SELECT res.rid as restricao_id, r.id as restritor_id
+            SELECT res.id_poderoso as restricao_id, r.id as restritor_id
     		    FROM restricao_cgu_view res, restritor r
     		    WHERE res.restritor_id=r.id
     """ ];
     rr:subjectMap [
-    		    rr:template 'http://arida.ufc.br/cgu/Restricao/{"restricao_id"}';
+    		    rr:template 'http://arida.ufc.br/cgu/restricao/{"restricao_id"}';
     		    #rr:class cgu:Restricao;
     ];
     rr:predicateObjectMap [
