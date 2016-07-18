@@ -13,3 +13,7 @@ CREATE OR REPLACE VIEW public.partido_candidato_view AS
     partido p
   WHERE c.numero_partido = p.numero;
 
+create view candidato_bens_view as 
+select c.id as candidato_id
+from candidato c, bem_candidato b
+where c.sequencial = b.sequencial_cand;
