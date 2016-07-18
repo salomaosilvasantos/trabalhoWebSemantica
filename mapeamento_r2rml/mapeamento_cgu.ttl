@@ -109,7 +109,7 @@ map:Restricao a rr:TriplesMap;
 
 	rr:subjectMap [
 		rr:template 'http://arida.ufc.br/cgu/RestringidoPessoa/{"id_pessoa"}';
-		rr:class foaf:Person;
+		#rr:class foaf:Person;
 	];
 
 	rr:predicateObjectMap [
