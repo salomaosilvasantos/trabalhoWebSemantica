@@ -127,7 +127,7 @@ map:Provenance a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from provenance""" ];
     rr:subjectMap [
-        rr:template "Provenance/{id}/";
+        rr:template "http://arida.ufc.br/cgu/Provenance/{id}/";
         rr:class cgu:Provenance;
     ];
     rr:predicateObjectMap [
@@ -182,7 +182,7 @@ map:Provenance a rr:TriplesMap;
 		            WHERE r.provenance_id= p.id
 	               """ ];
        rr:subjectMap [
-		          rr:template 'http://arida.ufc.br/cgu/restricao/{"id_restricao"}';
+		          rr:template 'http://arida.ufc.br/cgu/Restricao/{"id_restricao"}';
 		          #rr:class cgu:Restricao;
 	     ];
 	     rr:predicateObjectMap [
@@ -228,7 +228,7 @@ map:Provenance a rr:TriplesMap;
     		    WHERE res.restritor_id=r.id
     """ ];
     rr:subjectMap [
-    		    rr:template 'http://arida.ufc.br/cgu/restricao/{"restricao_id"}';
+    		    rr:template 'http://arida.ufc.br/cgu/Restricao/{"restricao_id"}';
     		    #rr:class cgu:Restricao;
     ];
     rr:predicateObjectMap [
