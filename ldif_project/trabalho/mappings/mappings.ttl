@@ -24,6 +24,7 @@ mp:pessoaMappingClass
 	r2r:sourcePattern "?SUBJ rdf:type foaf:Person";
 	r2r:targetPattern "?SUBJ rdf:type foaf:Person" .
 
+	
 #Restricao CGU
 mp:restricaoCGUMappingClass
 	a r2r:Mapping;
@@ -130,6 +131,13 @@ mp:mapPropertyRestricaoCGU08
 	r2r:sourcePattern "?SUBJ cgu:temProvenance ?o";
 	r2r:mappingRef mp:restricaoCGUMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:temProvenance ?o" .
+	
+mp:mapPropertyRestricaoCGU09
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ cgu:temRestricao ?o";
+	r2r:mappingRef mp:pessoaMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temRestricao ?o" .
 
 	
 ###Restricao TCU
@@ -183,6 +191,14 @@ mp:mapProperty07
 	r2r:mappingRef mp:restricaoTCUMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:temProvenance ?o" .
 	
+mp:mapProperty08
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tcu:temRestricao ?o";
+	r2r:mappingRef mp:pessoaMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temRestricao ?o" .
+	
+
 #Restricao TSE
 
 mp:mapPropertyRestricaoTSE01
@@ -233,3 +249,10 @@ mp:mapPropertyRestricaoTSE07
 	r2r:sourcePattern "?SUBJ tse:temProvenance ?o";
 	r2r:mappingRef mp:restricaoTSEMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:temProvenance ?o" .
+	
+mp:mapPropertyRestricaoTSE08
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tse:temRestricao ?o" ;
+	r2r:mappingRef mp:pessoaMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temRestricao ?o" .
