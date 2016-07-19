@@ -10,7 +10,7 @@
     <mappings>mappings</mappings>
     <sieve>sieve</sieve>
     <output>
-        <file>test.nq</file>
+        <file>triplas_output.nq</file>
         <!--phase>silk</phase-->
     </output>
     <runSchedule>onStartup</runSchedule>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Silk xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../xsd/LinkSpecificationLanguage.xsd" >
+    <Prefixes>
+        <Prefix id="rdf" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+        <Prefix id="rdfs" namespace="http://www.w3.org/2000/01/rdf-schema#" />
+        <Prefix id="owl" namespace="http://www.w3.org/2002/07/owl#" />
+        <Prefix id="foaf" namespace="http://xmlns.com/foaf/0.1/" />
+        <Prefix id="time" namespace="http://www.w3.org/2006/time#"/>
+        <Prefix id="dbo" namespace="http://dbpedia.org/ontology/"/><Prefix id="dbr" namespace="http://dbpedia.org/resource/"/>
+    </Prefixes>
+
+    <Interlinks>
+
+        <Interlink id="comparacao_tcu_cgu">
+            <LinkType>owl:sameAs</LinkType>
+
+            <SourceDataset dataSource="SOURCE" var="a">
+                <RestrictTo>?a rdf:type foaf:Person .</RestrictTo>
+            </SourceDataset>
+
+            <TargetDataset dataSource="TARGET" var="b">
+                <RestrictTo>?b rdf:type foaf:Person .</RestrictTo>
+            </TargetDataset>
+
+            <LinkageRule>
+                <Aggregate id="max1" required="false" weight="1" type="max">
+                <Compare metric="levenshteinDistance">
+                    
+                        
+                        <Input id="sourcePath1" path="?a/dbr:cpf"/>
+                        
+                    
+                    
+                        
+                        <Input id="targetPath1" path="?b/dbr:cpf"/>
+                        
+                    
+                </Compare>
+                <Compare metric="levenshteinDistance">
+                    <TransformInput id="lowerCase1" function="lowerCase">
+                    <!--    <TransformInput id="normalizeChars1" function="normalizeChars"> --> 
+                        <Input id="sourcePath2" path="?a/foaf:name"/>
+                    <!--    </TransformInput> -->
+                    </TransformInput>
+                    <TransformInput id="lowerCase2" function="lowerCase">
+                    <!--    <TransformInput id="normalizeChars2" function="normalizeChars"> -->
+                        <Input id="targetPath2" path="?b/foaf:name"/>
+                    <!--    </TransformInput> -->
+                    </TransformInput>
+                </Compare>
+                </Aggregate>
+            </LinkageRule>
+
+            <Filter />
+        </Interlink>
+
+    </Interlinks>
+
+</Silk>

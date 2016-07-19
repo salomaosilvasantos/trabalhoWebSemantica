@@ -17,48 +17,42 @@
 ######################
 
 
-#__________ to mo:MusicArtist, mo:MusicGroup, mo:SoloMusicArtist __________#
-
-
 #Pessoa
 mp:pessoaMappingClass
 	a r2r:Mapping;
 	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/> . vocab: <http://arida.ufc.br/vocab/> ." ;
 	r2r:sourcePattern "?SUBJ rdf:type foaf:Person";
 	r2r:targetPattern "?SUBJ rdf:type foaf:Person" .
-	
 
-
-#Restricao TCU 
-mp:restricaoTCUMappingClass
-	a r2r:Mapping;
-	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/vocab/resource/tcu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
-	r2r:sourcePattern "?SUBJ rdf:type tcu:Restricao";
-	r2r:targetPattern "?SUBJ rdf:type vocab:Restricao" .
-	
-	
 #Restricao CGU
 mp:restricaoCGUMappingClass
 	a r2r:Mapping;
-	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
 	r2r:sourcePattern "?SUBJ rdf:type cgu:Restricao";
 	r2r:targetPattern "?SUBJ rdf:type vocab:Restricao" .
+	
+#Restricao TCU 
+mp:restricaoTCUMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type tcu:Restricao";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Restricao" .
+
 	
 #Restricao TSE
 mp:restricaoTSEMappingClass
 	a r2r:Mapping;
-	r2r:prefixDefinitions "tse: <http://arida.ufc.br/vocab/resource/tse/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/> ." ;
 	r2r:sourcePattern "?SUBJ rdf:type tse:Restricao";
 	r2r:targetPattern "?SUBJ rdf:type vocab:Restricao" .
+
+
 	
-
-#Restricao TSE
-
-
-
 ######################
 ### Properties #######
 ######################
+
+
 
 #Pessoa
 mp:mapPropertyPessoa01
@@ -68,21 +62,74 @@ mp:mapPropertyPessoa01
 	r2r:mappingRef mp:pessoaMappingClass ;
 	r2r:targetPattern "?SUBJ foaf:name ?o" .
 	
-
-mp:mapPropertyPessoa02
+	
+### Restricao CGU
+mp:mapPropertyRestricaoCGU01
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "dbr: <http://dbpedia.org/resource/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ dbr:cpf ?o";
-	r2r:mappingRef mp:pessoaMappingClass ;
-	r2r:targetPattern "?SUBJ dbr:cpf ?o" .
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ <http://arida.ufc.br/cgu/numeroProcesso> ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ <http://arida.ufc.br/vocab/numeroProcesso> ?o" .
 	
 
+mp:mapPropertyRestricaoCGU02
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ cgu:OrgaoSancionador ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:orgaoSancionador ?o" .
+	
+	
+mp:mapPropertyRestricaoCGU03
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ cgu:tipoSancao ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:tipoSancao ?o" .	
+	
+mp:mapPropertyRestricaoCGU04
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ foaf:state ?uf";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:state ?uf" .
 
-#Restricao TCU
+	
+mp:mapPropertyRestricaoCGU05
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ time:date ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:date ?o" .
+	
+mp:mapPropertyRestricaoCGU06
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+
+mp:mapPropertyRestricaoCGU07
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ cgu:temRestritor ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temRestritor ?o" .
+	
+mp:mapPropertyRestricaoCGU08
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ cgu:temProvenance ?o";
+	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temProvenance ?o" .
+
+	
+###Restricao TCU
 
 mp:mapProperty01
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/vocab/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ tcu:numeroProcesso ?o";
 	r2r:mappingRef mp:restricaoTCUMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:numeroProcesso ?o" .
@@ -96,103 +143,86 @@ mp:mapProperty02
 	
 mp:mapProperty03
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/vocab/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ tcu:numeroDeliberacao ?o";
 	r2r:mappingRef mp:restricaoTCUMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:numeroDeliberacao ?o" .
 	
 mp:mapProperty04
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/> . tcu: <http://arida.ufc.br/vocab/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:restricaoTCUMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+
+mp:mapProperty05
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ time:endDate ?o";
 	r2r:mappingRef mp:restricaoTCUMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:endDate ?o" .
 	
-mp:mapProperty05
+mp:mapProperty06
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . tcu: <http://arida.ufc.br/vocab/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tcu:temRestritor ?o";
 	r2r:mappingRef mp:restricaoTCUMappingClass ;
-	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	r2r:targetPattern "?SUBJ vocab:temRestritor ?o" .
 	
-
-#Restricao CGU
-
-mp:mapPropertyRestricaoCGU01
+mp:mapProperty07
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ cgu:numeroProcesso ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
-	r2r:targetPattern "?SUBJ vocab:numeroProcesso ?o" .
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tcu:temProvenance ?o";
+	r2r:mappingRef mp:restricaoTCUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temProvenance ?o" .
 	
-mp:mapPropertyRestricaoCGU02
-	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ foaf:state ?uf";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
-	r2r:targetPattern "?SUBJ vocab:state ?uf" .
-	
-mp:mapPropertyRestricaoCGU03
-	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ cgu:OrgaoSancionador ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
-	r2r:targetPattern "?SUBJ vocab:orgaoSancionador ?o" .
-	
-mp:mapPropertyRestricaoCGU04
-	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/> . cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ time:date ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
-	r2r:targetPattern "?SUBJ vocab:date ?o" .
-	
-mp:mapPropertyRestricaoCGU05
-	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ rdf:id ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
-	r2r:targetPattern "?SUBJ rdf:id ?o" .
-
-mp:mapPropertyRestricaoCGU06
-	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ cgu:tipoSancao ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
-	r2r:targetPattern "?SUBJ vocab:tipoSancao ?o" .	
-
 #Restricao TSE
 
 mp:mapPropertyRestricaoTSE01
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "tse: <http://arida.ufc.br/vocab/resource/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ tse:numeroProcesso ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:numeroProcesso ?o" .
 	
 mp:mapPropertyRestricaoTSE02
 	a r2r:PropertyMapping;
 	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ foaf:state ?uf";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:state ?uf" .
 	
 mp:mapPropertyRestricaoTSE03
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
-	r2r:sourcePattern "?SUBJ cgu:OrgaoSancionador ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tse:OrgaoSancionador ?o";
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:orgaoSancionador ?o" .
 	
 mp:mapPropertyRestricaoTSE04
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/> . cgu: <http://arida.ufc.br/vocab/resource/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ time:date ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:date ?o" .
 	
 mp:mapPropertyRestricaoTSE05
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . cgu: <http://arida.ufc.br/vocab/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> . vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ rdf:id ?o";
-	r2r:mappingRef mp:restricaoCGUMappingClass ;
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
 	r2r:targetPattern "?SUBJ rdf:id ?o" .
+
+mp:mapPropertyRestricaoTSE06
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tse:temRestritor ?o";
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temRestritor ?o" .
+	
+mp:mapPropertyRestricaoTSE07
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tse:temProvenance ?o";
+	r2r:mappingRef mp:restricaoTSEMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:temProvenance ?o" .

@@ -1,5 +1,5 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix tse: <http://arida.ufc.br/vocab/resource/tse/> .
+@prefix tse: <http://arida.ufc.br/tse/> .
 @prefix map: <#> .
 @prefix map: <http://example/> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
@@ -50,13 +50,13 @@ map:Restricao a rr:TriplesMap;
     rr:logicalTable [
             rr:sqlQuery """SELECT * from restricao_tse_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/tse/restricao/{rid}";
-        rr:class foaf:Restricao;
+        rr:template "http://arida.ufc.br/tse/restricao/{id_poderoso}";
+        rr:class tse:Restricao;
     ];
     rr:predicateObjectMap [
         rr:predicate rdf:id;
         rr:objectMap [
-            rr:template "{rid}";
+            rr:template "{id_poderoso}";
             rr:termType rr:Literal;
         ];
     ];
@@ -97,10 +97,11 @@ map:Restricao a rr:TriplesMap;
     ];
 .
 
+#ERRO ABAIXO! 
 #relacao entre as tabela pessoa e restricao
    map:Person_tem_restricao
 	       rr:logicalTable [ rr:sqlQuery """
-                 SELECT p.id as id_pessoa, r.rid as id_restricao
+                 SELECT p.id as id_pessoa, r.rid as id_restricao, r.id_poderoso
 		             FROM pessoa_tse_view p, restricao_tse_view r
 		             WHERE p.id= r.pessoa_id
 	       """ ];
@@ -113,7 +114,7 @@ map:Restricao a rr:TriplesMap;
 		            rr:objectMap [
 			                rr:parentTriplesMap map:Restricao;
 			                rr:joinCondition[
-				                     rr:child 'id_restricao';
+				                     rr:child 'id_poderoso';
 				                     rr:parent 'rid';
 			                ]
 		           ]
@@ -168,12 +169,12 @@ map:Restricao a rr:TriplesMap;
 #relacao entre as tabela restricao e provenance
    map:Restritor_tem_provenance
 	      rr:logicalTable [ rr:sqlQuery """
-              SELECT r.rid as id_restricao, p.id as id_provenance
+              SELECT r.id_poderoso, r.rid as id_restricao, p.id as id_provenance
 		          FROM restricao_tse_view r, provenance p
 		          WHERE r.provenance_id= p.id
 	      """ ];
 	      rr:subjectMap [
-		           rr:template 'http://arida.ufc.br/tse/restricao/{"id_restricao"}';
+		           rr:template 'http://arida.ufc.br/tse/restricao/{"id_poderoso"}';
 		           #rr:class tse:Restricao;
 	      ];
 	      rr:predicateObjectMap [
@@ -186,6 +187,7 @@ map:Restricao a rr:TriplesMap;
 			               ]
 		         ]
 	      ].
+		  
 
 #Mapeamento table Restritor
     map:Restritor a rr:TriplesMap;
@@ -214,12 +216,12 @@ map:Restricao a rr:TriplesMap;
 #relacao entre as tabela restricao e restritor
     map:restricao_tem_restritor
   	     rr:logicalTable [ rr:sqlQuery """
-                  SELECT res.rid as restricao_id, r.id as restritor_id
-  		            FROM restricao_tse_view res, restritor r
-  		            WHERE res.restritor_id=r.id
+                  SELECT rv.id_poderoso, rv.rid as restricao_id, r.id as id_restritor
+		          FROM restricao_tse_view rv, restritor r
+		          WHERE rv.restritor_id= r.id
   	     """ ];
   	     rr:subjectMap [
-  		        rr:template 'http://arida.ufc.br/tse/restricao/{"restricao_id"}';
+  		        rr:template 'http://arida.ufc.br/tse/restricao/{"id_poderoso"}';
   		        #rr:class tse:Restricao;
   	     ];
   	     rr:predicateObjectMap [
@@ -227,7 +229,7 @@ map:Restricao a rr:TriplesMap;
   		       rr:objectMap [
   			          rr:parentTriplesMap map:Restritor;
   			          rr:joinCondition[
-  				              rr:child 'restricao_id';
+  				              rr:child 'id_restritor';
   				              rr:parent 'id';
   			          ]
   		       ]

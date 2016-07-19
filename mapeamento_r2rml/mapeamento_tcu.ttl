@@ -1,5 +1,5 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix tcu: <http://arida.ufc.br/vocab/resource/tcu/> .
+@prefix tcu: <http://arida.ufc.br/tcu/> .
 @prefix map: <#> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -214,25 +214,24 @@
  .
 
 #relacao entre as tabela restricao e restritor
-   map:restricao_tem_restritor
-	rr:logicalTable [ rr:sqlQuery """
-                SELECT res.rid as restricao_id, r.id as restritor_id
-		FROM restricao_tcu_view res, restritor r
-		WHERE res.restritor_id=r.id
-	""" ];
-	rr:subjectMap [
-		rr:template 'http://arida.ufc.br/tcu/restricao/{"restricao_id"}';
-		#rr:class tcu:Restricao; 
-	];
-
-	rr:predicateObjectMap [ 
-		rr:predicate tcu:temRestritor; 
-		rr:objectMap [
-			rr:parentTriplesMap map:Restritor;
-			rr:joinCondition[
-				rr:child 'restricao_id';
-				rr:parent 'id';
-			] 
-		]
-	].
-
+    map:restricao_tem_restritor
+  	     rr:logicalTable [ rr:sqlQuery """
+                  SELECT rv.rid as restricao_id, r.id as id_restritor
+		          FROM restricao_tcu_view rv, restritor r
+		          WHERE rv.restritor_id= r.id
+  	     """ ];
+  	     rr:subjectMap [
+  		        rr:template 'http://arida.ufc.br/tcu/restricao/{"restricao_id"}';
+  		        #rr:class tcu:Restricao;
+  	     ];
+  	     rr:predicateObjectMap [
+  		       rr:predicate tcu:temRestritor;
+  		       rr:objectMap [
+  			          rr:parentTriplesMap map:Restritor;
+  			          rr:joinCondition[
+  				              rr:child 'id_restritor';
+  				              rr:parent 'id';
+  			          ]
+  		       ]
+  	     ]
+.
