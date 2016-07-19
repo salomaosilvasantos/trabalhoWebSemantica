@@ -117,7 +117,7 @@ map:Restricao a rr:TriplesMap;
 		            rr:objectMap [
 			                rr:parentTriplesMap map:Restricao;
 			                rr:joinCondition[
-				                     rr:child 'id_poderoso';
+				                     rr:child 'id_restricao'; 
 				                     rr:parent 'rid';
 			                ]
 		           ]

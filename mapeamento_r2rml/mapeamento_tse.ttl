@@ -97,11 +97,10 @@ map:Restricao a rr:TriplesMap;
     ];
 .
 
-#ERRO ABAIXO! 
 #relacao entre as tabela pessoa e restricao
    map:Person_tem_restricao
 	       rr:logicalTable [ rr:sqlQuery """
-                 SELECT p.id as id_pessoa, r.rid as id_restricao, r.id_poderoso
+                 SELECT p.id as id_pessoa, r.rid as id_restricao, r.id_poderoso, r.uf as uf
 		             FROM pessoa_tse_view p, restricao_tse_view r
 		             WHERE p.id= r.pessoa_id
 	       """ ];
@@ -114,7 +113,7 @@ map:Restricao a rr:TriplesMap;
 		            rr:objectMap [
 			                rr:parentTriplesMap map:Restricao;
 			                rr:joinCondition[
-				                     rr:child 'id_poderoso';
+				                     rr:child 'id_restricao'; 
 				                     rr:parent 'rid';
 			                ]
 		           ]
