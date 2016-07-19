@@ -1,0 +1,248 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cgu: <http://arida.ufc.br/cgu/> .
+@prefix map: <#> .
+@prefix map: <http://example/> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix conf: <http://ufc.arida.br/conf/> .
+@prefix vcard: <http://www.w3.org/TR/vcard-rdf/> .
+@prefix dc: <http://dublincore.org/documents/dc-rdf/> .
+@prefix dcterms: <http://dublincore.org/documents/dcmi-terms/> .
+@prefix dbo: <http://dbpedia.org/ontology/>.
+@prefix dbr: <http://dbpedia.org/resource/>.
+@prefix time: <http://www.w3.org/TR/owl-time/>.
+
+
+map:Person a rr:TriplesMap;
+    rr:logicalTable [
+            rr:sqlQuery """SELECT * from pessoa_cgu_view""" ];
+    rr:subjectMap [
+        rr:template "http://arida.ufc.br/resource/restringidopessoa/{ID}";
+        rr:class foaf:Person;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate foaf:name;
+        rr:objectMap [
+            rr:template "{Nome}";
+            rr:termType rr:Literal;
+        ];
+    ];
+  	rr:predicateObjectMap [
+        rr:predicate dbr:cpf;
+        rr:objectMap [
+            rr:template "{CPF}";
+            rr:termType rr:Literal;
+        ];
+      ];
+    rr:predicateObjectMap [
+        rr:predicate rdf:id;
+        rr:objectMap [
+            rr:template "{id}";
+            rr:termType rr:Literal;
+        ];
+    ];
+.
+
+#mapeando retricao
+map:Restricao a rr:TriplesMap;
+    rr:logicalTable [
+            rr:sqlQuery """SELECT * from restricao_cgu_view""" ];
+    rr:subjectMap [
+        rr:template "http://arida.ufc.br/resource/restricao/{id_poderoso}";
+        rr:class cgu:Restricao;
+    ];
+    rr:predicateObjectMap [
+        rr:predicate rdf:id;
+        rr:objectMap [
+            rr:template "{id_poderoso}";
+            rr:termType rr:Literal;
+        ];
+    ];
+    rr:predicateObjectMap [
+        rr:predicate cgu:numeroProcesso;
+	rr:objectMap [
+	    rr:template "{numProcess}";
+            rr:termType rr:Literal;
+	];
+    ];
+    rr:predicateObjectMap [
+    	rr:predicate time:date;
+    	rr:objectMap [
+	    rr:template "{date}";
+            rr:termType rr:Literal;
+        ];
+    ];
+    rr:predicateObjectMap [
+	rr:predicate foaf:state;
+	rr:objectMap [            
+	    rr:template "{uf}"; 
+	    rr:termType rr:Literal;
+	];
+    ];
+	
+    rr:predicateObjectMap [
+	rr:predicate cgu:OrgaoSancionador;
+	rr:objectMap [            
+	    rr:template "{orgaosancionador}"; 
+	    rr:termType rr:Literal;
+	];
+    ];
+	
+	rr:predicateObjectMap [
+	      rr:predicate cgu:tipoSancao;
+	      rr:objectMap [            
+	          rr:template "{tipo_sancao}"; 
+	          rr:termType rr:Literal;
+	      ];
+	];
+.
+
+
+#ERRO ABAIXO! 
+#relacao entre as tabela pessoa e restricao
+   map:Person_tem_restricao
+	       rr:logicalTable [ rr:sqlQuery """
+                 SELECT p.id as id_pessoa, r.rid as id_restricao, r.id_poderoso
+		             FROM pessoa_cgu_view p, restricao_cgu_view r
+		             WHERE p.id= r.pessoa_id
+	       """ ];
+	       rr:subjectMap [
+		            rr:template 'http://arida.ufc.br/resource/restringidopessoa/{"id_pessoa"}';
+		            #rr:class foaf:Person;
+	       ];
+	       rr:predicateObjectMap [
+		            rr:predicate cgu:temRestricao;
+		            rr:objectMap [
+			                rr:parentTriplesMap map:Restricao;
+			                rr:joinCondition[
+				                     rr:child 'id_poderoso';
+				                     rr:parent 'rid';
+			                ]
+		           ]
+	      ].
+
+#mapeando tabela provenance
+
+ map:Provenance a rr:TriplesMap;
+    rr:logicalTable [
+            rr:sqlQuery """SELECT * from provenance""" ];
+    rr:subjectMap [
+        rr:template "http://arida.ufc.br/resource/provenance/{id}";
+        rr:class cgu:Provenance;
+    ];
+	rr:predicateObjectMap [
+        rr:predicate rdf:id;
+        rr:objectMap [
+            rr:template "{id}";
+            rr:termType rr:Literal;
+        ];
+    ];
+  	rr:predicateObjectMap [
+          rr:predicate rdfs:label;
+          rr:objectMap [
+              rr:template "{label}";
+              rr:termType rr:Literal;
+          ];
+    ];
+  	rr:predicateObjectMap [
+          rr:predicate dbr:fileName;
+          rr:objectMap [
+              rr:template "{filename}";
+              rr:termType rr:Literal;
+          ];
+    ];
+  	rr:predicateObjectMap [
+          rr:predicate time:date;
+          rr:objectMap [
+              rr:template "{date}";
+              rr:termType rr:Literal;
+          ];
+    ];
+  	rr:predicateObjectMap [
+          rr:predicate dc:source;
+          rr:objectMap [
+              rr:template "{source}";
+              rr:termType rr:Literal;
+          ];
+    ];
+  	rr:predicateObjectMap [
+          rr:predicate cgu:complement;
+          rr:objectMap [
+              rr:template "{complement}";
+              rr:termType rr:Literal;
+          ];
+    ];
+.
+
+#relacao entre as tabela restricao e provenance
+   map:Restritor_tem_provenance
+	      rr:logicalTable [ rr:sqlQuery """
+              SELECT r.id_poderoso, r.rid as id_restricao, p.id as id_provenance
+		          FROM restricao_cgu_view r, provenance p
+		          WHERE r.provenance_id= p.id
+	      """ ];
+	      rr:subjectMap [
+		           rr:template 'http://arida.ufc.br/resource/restricao/{"id_poderoso"}';
+		           #rr:class cgu:Restricao;
+	      ];
+	      rr:predicateObjectMap [
+		          rr:predicate cgu:temProvenance;
+		          rr:objectMap [
+			               rr:parentTriplesMap map:Provenance;
+			               rr:joinCondition[
+				                     rr:child 'id_provenance';
+				                     rr:parent 'id';
+			               ]
+		         ]
+	      ].
+		  
+
+#Mapeamento table Restritor
+    map:Restritor a rr:TriplesMap;
+        rr:logicalTable [
+                rr:sqlQuery """SELECT * from restritor""" ];
+        rr:subjectMap [
+              rr:template "http://arida.ufc.br/resource/restritor/{id}";
+              rr:class cgu:Restritor;
+        ];
+        rr:predicateObjectMap [
+              rr:predicate rdf:id;
+              rr:objectMap [
+                     rr:template "{id}";
+                     rr:termType rr:Literal;
+              ];
+        ];
+        rr:predicateObjectMap [
+              rr:predicate rdfs:label;
+              rr:objectMap [
+                    rr:template "{label}";
+                    rr:termType rr:Literal;
+              ];
+        ];
+  .
+  
+
+#relacao entre as tabela restricao e restritor
+    map:restricao_tem_restritor
+  	     rr:logicalTable [ rr:sqlQuery """
+                  SELECT rv.id_poderoso, rv.rid as restricao_id, r.id as id_restritor
+		          FROM restricao_cgu_view rv, restritor r
+		          WHERE rv.restritor_id= r.id
+  	     """ ];
+  	     rr:subjectMap [
+  		        rr:template 'http://arida.ufc.br/resource/restricao/{"id_poderoso"}';
+  		        #rr:class cgu:Restricao;
+  	     ];
+  	     rr:predicateObjectMap [
+  		       rr:predicate cgu:temRestritor;
+  		       rr:objectMap [
+  			          rr:parentTriplesMap map:Restritor;
+  			          rr:joinCondition[
+  				              rr:child 'id_restritor';
+  				              rr:parent 'id';
+  			          ]
+  		       ]
+  	     ]
+.
