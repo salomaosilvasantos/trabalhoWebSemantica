@@ -19,7 +19,7 @@
     rr:logicalTable [ 
             rr:sqlQuery """SELECT * from pessoa_tcu_view""" ];
     rr:subjectMap [
-        rr:template "http://arida.ufc.br/resource/restringidopessoa/{ID}";
+        rr:template "http://arida.ufc.br/resource/restringidopessoa/{cpf}";
         rr:class foaf:Person;
     ];
     rr:predicateObjectMap [
@@ -35,14 +35,7 @@
             rr:template "{CPF}"; 
             rr:termType rr:Literal;
         ];
-    ];
-    rr:predicateObjectMap [
-        rr:predicate rdf:id;
-        rr:objectMap [            
-            rr:template "{id}"; 
-            rr:termType rr:Literal;
-        ];
-    ]; .
+    ];.
 
 #Mapeamento com view restricao_tcu_view
   map:Restricao a rr:TriplesMap;
@@ -93,13 +86,13 @@
 #relacao entre as tabela pessoa e restricao
    map:Person_tem_restricao
 	rr:logicalTable [ rr:sqlQuery """
-                SELECT p.id as id_pessoa, r.rid as id_restricao 
+                SELECT p.id as id_pessoa, r.rid as id_restricao, p.cpf as cpf
 		FROM pessoa_tcu_view p, restricao_tcu_view r
 		WHERE p.id= r.pessoa_id
 	""" ];
 
 	rr:subjectMap [
-		rr:template 'http://arida.ufc.br/resource/restringidopessoa/{"id_pessoa"}';
+		rr:template 'http://arida.ufc.br/resource/restringidopessoa/{cpf}';
 		#rr:class foaf:Person; 
 	];
 
