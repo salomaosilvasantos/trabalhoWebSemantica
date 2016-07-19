@@ -439,7 +439,7 @@ mp:mapPropertyTCURestritor1
 	
 mp:mapPropertyTSEProvenance2
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ rdfs:label ?o";
 	r2r:mappingRef mp:restritorTCUMappingClass ;
 	r2r:targetPattern "?SUBJ rdfs:label ?o" .
@@ -453,7 +453,7 @@ mp:mapPropertyCGURestritor1
 	
 mp:mapPropertyCGUProvenance2
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ rdfs:label ?o";
 	r2r:mappingRef mp:restritorCGUMappingClass  ;
 	r2r:targetPattern "?SUBJ rdfs:label ?o" .
@@ -467,7 +467,7 @@ mp:mapPropertyTSERestritor1
 	
 mp:mapPropertyTSEProvenance2
 	a r2r:PropertyMapping;
-	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:prefixDefinitions "vocab: <http://arida.ufc.br/vocab/ ." ;
 	r2r:sourcePattern "?SUBJ rdfs:label ?o";
 	r2r:mappingRef mp:restritorTSEMappingClass  ;
 	r2r:targetPattern "?SUBJ rdfs:label ?o" .
