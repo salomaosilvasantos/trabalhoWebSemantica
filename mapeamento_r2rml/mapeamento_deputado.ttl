@@ -19,8 +19,8 @@ map:Deputado a rr:TriplesMap;
 	rr:logicalTable [
         	rr:sqlQuery """select * from deputado_view""" ];
 	rr:subjectMap [
-    		rr:template "http://arida.ufc.br/Deputado/{ID}/";
-		rr:class foaf:Person;
+    		rr:template "http://arida.ufc.br/resource/politico/{ID}";
+		rr:class vocab:Politico;
 	];
 	rr:predicateObjectMap [
         	rr:predicate foaf:name;
@@ -50,8 +50,8 @@ map:Partido a rr:TriplesMap;
 	rr:logicalTable [
         	rr:sqlQuery """select * from partido_view""" ];
 	rr:subjectMap [
-    		rr:template "http://arida.ufc.br/Partido/{ID}/";
-		rr:class vocab:Partido;
+    		rr:template "http://arida.ufc.br/resource/partido/{ID}";
+		rr:class vocab:PartidoPolitico;
 	];
 	rr:predicateObjectMap [
         	rr:predicate rdfs:label;
@@ -77,12 +77,12 @@ map:Partido a rr:TriplesMap;
 	""" ];
 
 	rr:subjectMap [
-		rr:template 'http://arida.ufc.br/Deputado/{"id_deputado"}';
+		rr:template 'http://arida.ufc.br/resource/politico/{"id_deputado"}';
 		#rr:class foaf:Person;
 	];
 
 	rr:predicateObjectMap [
-		rr:predicate vocab:temParty;
+		rr:predicate vocab:temPartidoPolitico;
 		rr:objectMap [
 			rr:parentTriplesMap map:Partido;
 			rr:joinCondition[
@@ -91,4 +91,48 @@ map:Partido a rr:TriplesMap;
 			]
 		]
 	].
+ #voto
+  map:voto
+	rr:logicalTable [
+        	rr:sqlQuery """select * from voto_view""" ];
+	rr:subjectMap [
+    		rr:template "http://arida.ufc.br/resource/voto/{ID}";
+		rr:class vocab:Voto;
+	];
+	rr:predicateObjectMap [
+        	rr:predicate vocab:voto;
+        	rr:objectMap [
+            		rr:template "{voto}";
+            		rr:termType rr:Literal;
+        	];
+    	];
+  	rr:predicateObjectMap [
+        	rr:predicate vocab:discurso;
+        	rr:objectMap [
+            		rr:template "{discurso}";
+            		rr:termType rr:Literal;
+        	];
+    	];.
 
+
+  #relacao entre as tabela deputado tem voto
+   map:Deputado_tem_voto
+	rr:logicalTable [ rr:sqlQuery """
+               select deputado_id as id_deputado, voto_id as id_voto from deputado_votacao_view
+	""" ];
+
+	rr:subjectMap [
+		rr:template 'http://arida.ufc.br/resource/politico/{"id_deputado"}';
+
+	];
+
+	rr:predicateObjectMap [
+		rr:predicate vocab:temVotoPolitico;
+		rr:objectMap [
+			rr:parentTriplesMap map:voto;
+			rr:joinCondition[
+				rr:child 'id_voto';
+				rr:parent 'id';
+			]
+		]
+	].
