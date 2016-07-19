@@ -62,6 +62,13 @@ mp:mapPropertyPessoa01
 	r2r:mappingRef mp:pessoaMappingClass ;
 	r2r:targetPattern "?SUBJ foaf:name ?o" .
 	
+mp:mapPropertyPessoa02
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dbr: <http://dbpedia.org/resource/>. vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dbr:cpf ?o";
+	r2r:mappingRef mp:pessoaMappingClass ;
+	r2r:targetPattern "?SUBJ dbr:cpf ?o" .
+	
 	
 ### Restricao CGU
 mp:mapPropertyRestricaoCGU01
