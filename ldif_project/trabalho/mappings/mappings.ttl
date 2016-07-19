@@ -16,7 +16,6 @@
 ### Class Mappings ###
 ######################
 
-
 #Pessoa
 mp:pessoaMappingClass
 	a r2r:Mapping;
@@ -48,7 +47,47 @@ mp:restricaoTSEMappingClass
 	r2r:targetPattern "?SUBJ rdf:type vocab:Restricao" .
 
 
+
+mp:provenanceTCUMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type tcu:Provenance";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Provenance" .
 	
+mp:provenanceCGUMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type cgu:Provenance";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Provenance" .
+	
+mp:provenanceTSEMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type tse:Provenance";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Provenance" .
+
+	
+	
+#restritores 
+mp:restritorTCUMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type tcu:Restritor";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Restritor" .
+	
+mp:restritorCGUMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type cgu:Restritor";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Restritor" .
+	
+mp:restritorTSEMappingClass
+	a r2r:Mapping;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/> ." ;
+	r2r:sourcePattern "?SUBJ rdf:type tse:Restritor";
+	r2r:targetPattern "?SUBJ rdf:type vocab:Restritor" .
+	
+
 ######################
 ### Properties #######
 ######################
@@ -256,3 +295,179 @@ mp:mapPropertyRestricaoTSE08
 	r2r:sourcePattern "?SUBJ tse:temRestricao ?o" ;
 	r2r:mappingRef mp:pessoaMappingClass ;
 	r2r:targetPattern "?SUBJ vocab:temRestricao ?o" .
+	
+	
+###### Properties Provenance
+
+#Provenance TCU
+mp:mapPropertyTCUProvenance1
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions " vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:provenanceTCUMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+mp:mapPropertyTCUProvenance2
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdfs:label ?o";
+	r2r:mappingRef mp:provenanceTCUMappingClass ;
+	r2r:targetPattern "?SUBJ rdfs:label ?o" .
+	
+mp:mapPropertyTCUProvenance3
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dbr: <http://dbpedia.org/resource/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dbr:fileName ?o";
+	r2r:mappingRef mp:provenanceTCUMappingClass ;
+	r2r:targetPattern "?SUBJ dbr:fileName ?o" .
+	
+mp:mapPropertyTCUProvenance4
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/>. vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ time:date ?o";
+	r2r:mappingRef mp:provenanceTCUMappingClass ;
+	r2r:targetPattern "?SUBJ time:date ?o" .
+	
+mp:mapPropertyTCUProvenance5
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dc: <http://dublincore.org/documents/dc-rdf/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dc:source ?o";
+	r2r:mappingRef mp:provenanceTCUMappingClass ;
+	r2r:targetPattern "?SUBJ dc:source ?o" .
+
+mp:mapPropertyTCUProvenance6
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "tcu: <http://arida.ufc.br/tcu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tcu:complement ?o";
+	r2r:mappingRef mp:provenanceTCUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:complement ?o" .	
+
+# Provenance CGU
+	mp:mapPropertyCGUProvenance1
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:provenanceCGUMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+mp:mapPropertyCGUProvenance2
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdfs:label ?o";
+	r2r:mappingRef mp:provenanceCGUMappingClass ;
+	r2r:targetPattern "?SUBJ rdfs:label ?o" .
+	
+mp:mapPropertyCGUProvenance3
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dbr: <http://dbpedia.org/resource/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dbr:fileName ?o";
+	r2r:mappingRef mp:provenanceCGUMappingClass ;
+	r2r:targetPattern "?SUBJ dbr:fileName ?o" .
+	
+mp:mapPropertyTCUProvenance4
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/>. vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ time:date ?o";
+	r2r:mappingRef mp:provenanceCGUMappingClass ;
+	r2r:targetPattern "?SUBJ time:date ?o" .
+	
+mp:mapPropertyCGUProvenance5
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dc: <http://dublincore.org/documents/dc-rdf/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dc:source ?o";
+	r2r:mappingRef mp:provenanceCGUMappingClass ;
+	r2r:targetPattern "?SUBJ dc:source ?o" .
+
+mp:mapPropertyCGUProvenance6
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "cgu: <http://arida.ufc.br/cgu/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ cgu:complement ?o";
+	r2r:mappingRef mp:provenanceCGUMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:complement ?o" .	
+
+#Provenance TSE
+mp:mapPropertyTSEProvenance1
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions " vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:provenanceTSEMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+mp:mapPropertyTSEProvenance2
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdfs:label ?o";
+	r2r:mappingRef mp:provenanceTSEMappingClass ;
+	r2r:targetPattern "?SUBJ rdfs:label ?o" .
+	
+mp:mapPropertyTSEProvenance3
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dbr: <http://dbpedia.org/resource/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dbr:fileName ?o";
+	r2r:mappingRef mp:provenanceTSEMappingClass ;
+	r2r:targetPattern "?SUBJ dbr:fileName ?o" .
+	
+mp:mapPropertyTSEProvenance4
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "time: <http://www.w3.org/TR/owl-time/>. vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ time:date ?o";
+	r2r:mappingRef mp:provenanceTSEMappingClass ;
+	r2r:targetPattern "?SUBJ time:date ?o" .
+	
+mp:mapPropertyTSEProvenance5
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "dc: <http://dublincore.org/documents/dc-rdf/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ dc:source ?o";
+	r2r:mappingRef mp:provenanceTSEMappingClass ;
+	r2r:targetPattern "?SUBJ dc:source ?o" .
+
+mp:mapPropertyTSEProvenance6
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "tse: <http://arida.ufc.br/tse/> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ tse:complement ?o";
+	r2r:mappingRef mp:provenanceTSEMappingClass ;
+	r2r:targetPattern "?SUBJ vocab:complement ?o" .	
+
+	
+# restritores
+mp:mapPropertyTCURestritor1
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions " vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:restritorTCUMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+mp:mapPropertyTSEProvenance2
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdfs:label ?o";
+	r2r:mappingRef mp:restritorTCUMappingClass ;
+	r2r:targetPattern "?SUBJ rdfs:label ?o" .
+	
+mp:mapPropertyCGURestritor1
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions " vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:restritorCGUMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+mp:mapPropertyCGUProvenance2
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdfs:label ?o";
+	r2r:mappingRef mp:restritorCGUMappingClass  ;
+	r2r:targetPattern "?SUBJ rdfs:label ?o" .
+	
+mp:mapPropertyTSERestritor1
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions " vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdf:id ?o";
+	r2r:mappingRef mp:restritorTSEMappingClass ;
+	r2r:targetPattern "?SUBJ rdf:id ?o" .
+	
+mp:mapPropertyTSEProvenance2
+	a r2r:PropertyMapping;
+	r2r:prefixDefinitions "rdfs: <http://www.w3.org/2000/01/rdf-schema#> . vocab: <http://arida.ufc.br/vocab/ ." ;
+	r2r:sourcePattern "?SUBJ rdfs:label ?o";
+	r2r:mappingRef mp:restritorTSEMappingClass  ;
+	r2r:targetPattern "?SUBJ rdfs:label ?o" .
